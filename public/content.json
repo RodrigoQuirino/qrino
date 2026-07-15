@@ -1,0 +1,14 @@
+{
+  "tagline": "Imagine. Descreva. Visualize.",
+  "portfolio": [
+    {
+      "name": "Zé das Compras",
+      "description": "Catálogo de ofertas, promoções e cupons de desconto atualizado em tempo real.",
+      "url": "https://zedascompras.com.br"
+    }
+  ],
+  "contact": {
+    "linkedin": "https://www.linkedin.com/in/quirinorodrigo/",
+    "email": "rodrigo@qrino.com.br"
+  }
+}

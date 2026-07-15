@@ -4,26 +4,86 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Qrino</title>
+    <meta name="description" content="Qrino — portfólio de projetos.">
+
+    <link rel="icon" type="image/png" href="assets/logo.png">
+
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+
     <style>
-        body {
-            margin: 0;
-            min-height: 100vh;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            background: #0f172a;
-            color: #e2e8f0;
-            font-family: system-ui, -apple-system, sans-serif;
-            text-align: center;
-        }
-        h1 { font-size: 2.5rem; font-weight: 800; margin-bottom: 0.5rem; }
-        p { color: #94a3b8; }
+        body { background-color: #fafaf9; color: #1c1917; font-family: system-ui, -apple-system, sans-serif; }
+        .tagline { letter-spacing: -0.02em; }
+        .section-fade { animation: fadeIn 0.6s ease-out both; }
+        @keyframes fadeIn { from { opacity: 0; transform: translateY(12px); } to { opacity: 1; transform: translateY(0); } }
+        .card-project { transition: all 0.2s ease; }
+        .card-project:hover { transform: translateY(-4px); box-shadow: 0 12px 24px -8px rgba(0,0,0,0.12); }
     </style>
 </head>
-<body>
-    <div>
-        <h1>Qrino</h1>
-        <p>Em construção.</p>
-    </div>
+<body class="min-h-screen">
+
+    <!-- Hero -->
+    <section class="min-h-screen flex flex-col items-center justify-center px-4 text-center section-fade">
+        <img src="assets/logo.png" alt="Qrino" class="w-64 md:w-80 mb-8">
+        <p id="tagline" class="tagline text-2xl md:text-4xl font-black text-stone-900"></p>
+        <div class="mt-16 animate-bounce text-stone-300">
+            <i class="fas fa-chevron-down text-2xl"></i>
+        </div>
+    </section>
+
+    <!-- Portfolio -->
+    <section class="max-w-4xl mx-auto px-6 py-24">
+        <h2 class="text-sm font-black uppercase tracking-[0.3em] text-stone-400 mb-10 text-center">Portfólio</h2>
+        <div id="portfolio-grid" class="grid grid-cols-1 md:grid-cols-2 gap-6">
+            <!-- Preenchido via JS -->
+        </div>
+    </section>
+
+    <!-- Contato -->
+    <section class="max-w-4xl mx-auto px-6 py-24 text-center border-t border-stone-200">
+        <h2 class="text-sm font-black uppercase tracking-[0.3em] text-stone-400 mb-10">Contato</h2>
+        <div id="contact-links" class="flex flex-col md:flex-row gap-4 justify-center items-center">
+            <!-- Preenchido via JS -->
+        </div>
+    </section>
+
+    <footer class="text-center pb-10 text-stone-400 text-xs">
+        &copy; 2026 Qrino
+    </footer>
+
+    <script>
+        fetch('content.json')
+            .then(r => r.json())
+            .then(data => {
+                document.getElementById('tagline').textContent = data.tagline;
+
+                const grid = document.getElementById('portfolio-grid');
+                grid.innerHTML = data.portfolio.map(p => `
+                    <a href="${p.url}" target="_blank" rel="noopener"
+                       class="card-project block bg-white rounded-2xl border border-stone-200 p-8 text-left">
+                        <h3 class="text-xl font-black text-stone-900 mb-2">${p.name}</h3>
+                        <p class="text-stone-500 text-sm leading-relaxed mb-4">${p.description}</p>
+                        <span class="text-xs font-bold uppercase tracking-wider text-stone-900">
+                            Visitar <i class="fas fa-arrow-right ml-1"></i>
+                        </span>
+                    </a>
+                `).join('');
+
+                const contact = document.getElementById('contact-links');
+                contact.innerHTML = `
+                    <a href="${data.contact.linkedin}" target="_blank" rel="noopener"
+                       class="flex items-center gap-3 bg-stone-900 text-white px-6 py-4 rounded-xl font-bold hover:bg-stone-700 transition-colors w-full md:w-auto justify-center">
+                        <i class="fab fa-linkedin text-xl"></i> LinkedIn
+                    </a>
+                    <a href="mailto:${data.contact.email}"
+                       class="flex items-center gap-3 bg-white border border-stone-300 text-stone-900 px-6 py-4 rounded-xl font-bold hover:border-stone-900 transition-colors w-full md:w-auto justify-center">
+                        <i class="fas fa-envelope text-xl"></i> ${data.contact.email}
+                    </a>
+                `;
+            })
+            .catch(() => {
+                document.getElementById('tagline').textContent = 'Imagine. Descreva. Visualize.';
+            });
+    </script>
 </body>
 </html>
