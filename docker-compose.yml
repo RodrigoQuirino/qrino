@@ -1,0 +1,9 @@
+services:
+  qrino-portfolio:
+    image: nginx:alpine
+    container_name: qrino_portfolio
+    restart: always
+    ports:
+      - '8090:80'
+    volumes:
+      - /opt/docker/qrino-portfolio/public:/usr/share/nginx/html:ro
