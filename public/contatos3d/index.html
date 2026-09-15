@@ -474,7 +474,7 @@ function render() {
       '<td class="col-toggle"><button type="button" class="row-toggle" aria-expanded="false" aria-controls="' + detailId + '"><span class="chevron" aria-hidden="true">▸</span><span class="sr-only">Ver detalhes de ' + escapeHtml(r.nome) + '</span></button></td>' +
       '<td>' + escapeHtml(r.nome) + '</td>' +
       '<td>' + (r.instagram ? '<a class="badge-link" href="https://instagram.com/' + encodeURIComponent(r.instagram) + '" target="_blank" rel="noopener noreferrer">@' + escapeHtml(r.instagram) + '</a>' : '') + '</td>' +
-      '<td>' + (r.whatsapp ? '<a class="badge-link whatsapp" href="https://wa.me/' + phone.link + '?text=' + msg + '" target="_blank" rel="noopener noreferrer" aria-label="Enviar mensagem no WhatsApp para ' + escapeHtml(r.nome) + '">' + phone.display + '</a>' : '') + '</td>';
+      '<td>' + (r.whatsapp ? '<a class="badge-link whatsapp" href="https://wa.me/' + phone.link + '?text=' + msg + '" target="_blank" rel="noopener noreferrer" aria-label="Enviar mensagem no WhatsApp para ' + escapeHtml(r.nome) + '" data-umami-event="whatsapp-click" data-umami-event-fornecedor="' + escapeHtml(r.nome) + '">' + phone.display + '</a>' : '') + '</td>';
     tbody.appendChild(tr);
 
     const detailTr = document.createElement('tr');
