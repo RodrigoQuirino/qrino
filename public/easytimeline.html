@@ -1,0 +1,2610 @@
+<meta charset="UTF-8">
+<title>Easy Timeline</title>
+<script defer src="https://analytics.zedascompras.com.br/script.js" data-website-id="88516fd5-5736-4986-b884-eaa9d7d9b2c9"></script>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Big+Shoulders:wght@600;700;800&family=IBM+Plex+Sans:wght@400;500;600&family=IBM+Plex+Mono:wght@400;500;600&display=swap">
+<style>
+  :root{
+    --ink:#1F2933;
+    --ink-soft:#5C6570;
+    --paper:#F3F2EC;
+    --paper-raised:#FBFAF6;
+    --line:#C9C4B8;
+    --line-strong:#A9A392;
+    --blue:#2A5C8A;
+    --blue-soft:#DCE7EF;
+    --rust:#B5502D;
+    --rust-soft:#F3E1D8;
+    --sage:#5B7A6B;
+    --sage-soft:#E1E9E4;
+    --amber:#966915;
+    --amber-soft:#F5E9C8;
+    --shadow:rgba(31,41,51,.14);
+    --focus:#2A5C8A;
+    --weekend:rgba(31,41,51,.06);
+    --select-bg:rgba(42,92,138,.10);
+  }
+  @media (prefers-color-scheme: dark){
+    :root:not([data-theme="light"]){
+      --ink:#ECE9E1;
+      --ink-soft:#A9AFB6;
+      --paper:#14181C;
+      --paper-raised:#1B2126;
+      --line:#333A40;
+      --line-strong:#4A525A;
+      --blue:#7BB0DB;
+      --blue-soft:#20323E;
+      --rust:#E08A5B;
+      --rust-soft:#3B2A22;
+      --sage:#8FB39E;
+      --sage-soft:#20302A;
+      --amber:#D9AE55;
+      --amber-soft:#3A3016;
+      --shadow:rgba(0,0,0,.5);
+      --focus:#7BB0DB;
+      --weekend:rgba(255,255,255,.05);
+      --select-bg:rgba(123,176,219,.14);
+    }
+  }
+  :root[data-theme="dark"]{
+    --ink:#ECE9E1;
+    --ink-soft:#A9AFB6;
+    --paper:#14181C;
+    --paper-raised:#1B2126;
+    --line:#333A40;
+    --line-strong:#4A525A;
+    --blue:#7BB0DB;
+    --blue-soft:#20323E;
+    --rust:#E08A5B;
+    --rust-soft:#3B2A22;
+    --sage:#8FB39E;
+    --sage-soft:#20302A;
+    --amber:#D9AE55;
+    --amber-soft:#3A3016;
+    --shadow:rgba(0,0,0,.5);
+    --focus:#7BB0DB;
+    --weekend:rgba(255,255,255,.05);
+    --select-bg:rgba(123,176,219,.14);
+  }
+
+  *{box-sizing:border-box;}
+  [hidden]{display:none !important;}
+  @media (prefers-reduced-motion: reduce){
+    *{animation-duration:0.001ms !important; transition-duration:0.001ms !important;}
+  }
+  body{background:var(--paper); color:var(--ink);}
+  .app, .app *{font-family:'IBM Plex Sans', system-ui, sans-serif;}
+  .mono{font-family:'IBM Plex Mono', ui-monospace, monospace;}
+  .display{font-family:'Big Shoulders', 'IBM Plex Sans', sans-serif;}
+
+  :focus-visible{outline:2px solid var(--focus); outline-offset:2px;}
+
+  .app{
+    display:grid;
+    grid-template-columns: 232px 1fr;
+    min-height:100vh;
+    background:var(--paper);
+    color:var(--ink);
+  }
+
+  /* ---------- sidebar ---------- */
+  .sidebar{
+    background:var(--paper-raised);
+    border-right:1px solid var(--line);
+    padding:22px 16px 16px;
+    display:flex;
+    flex-direction:column;
+    gap:18px;
+    min-height:100vh;
+  }
+  .sidebar-top-row{display:flex; align-items:flex-start; justify-content:space-between; gap:8px;}
+  .brand{display:flex; flex-direction:column; gap:2px;}
+  .brand-mark{font-weight:800; font-size:1.7rem; letter-spacing:.01em; line-height:1;}
+  .brand-sub{color:var(--ink-soft); font-size:.68rem; letter-spacing:.12em; text-transform:uppercase;}
+  .ruler{
+    height:1px;
+    background:var(--line);
+    margin-top:2px;
+  }
+  .sidebar-collapse-btn{
+    background:none; border:1px solid transparent; color:var(--ink-soft); cursor:pointer; font-size:1rem;
+    line-height:1; padding:4px 7px; border-radius:6px; flex-shrink:0;
+  }
+  .sidebar-collapse-btn:hover{background:var(--blue-soft); color:var(--blue);}
+  .sidebar-expand-btn{
+    position:fixed; top:18px; left:14px; z-index:50; width:34px; height:34px; border-radius:8px;
+    border:1px solid var(--line); background:var(--paper-raised); color:var(--ink-soft); cursor:pointer;
+    display:flex; align-items:center; justify-content:center; font-size:1rem; box-shadow:0 2px 6px var(--shadow);
+  }
+  .sidebar-expand-btn:hover{color:var(--blue); border-color:var(--blue);}
+  .app.is-sidebar-collapsed{grid-template-columns:1fr;}
+  .app.is-sidebar-collapsed .main{padding-left:64px;}
+  .app.is-sidebar-collapsed .sidebar{display:none;}
+  .sidebar-search{
+    width:100%; padding:7px 10px; border:1px solid var(--line); border-radius:8px;
+    background:var(--paper); color:var(--ink); font-size:.82rem; font-family:'IBM Plex Sans', sans-serif;
+  }
+  .sidebar-search:focus{border-color:var(--blue); outline:none;}
+  .project-list-divider{border-top:1px solid var(--line); margin:2px 4px 4px;}
+  .project-search-empty{padding:2px 2px 0;}
+  .btn{
+    font-family:'IBM Plex Sans', sans-serif;
+    font-size:.82rem;
+    font-weight:600;
+    border-radius:8px;
+    border:1px solid var(--line);
+    background:var(--paper-raised);
+    color:var(--ink);
+    padding:8px 14px;
+    cursor:pointer;
+    display:inline-flex;
+    align-items:center;
+    gap:6px;
+    line-height:1.2;
+    box-shadow:0 1px 2px var(--shadow);
+    transition:border-color .12s, box-shadow .12s, filter .12s, background .12s;
+  }
+  .btn:hover{border-color:var(--line-strong); box-shadow:0 2px 6px var(--shadow);}
+  .btn:active{box-shadow:none; filter:brightness(0.98);}
+  .btn:disabled{opacity:.5; cursor:not-allowed; box-shadow:none;}
+  .btn-primary{background:var(--blue); border-color:var(--blue); color:#fff;}
+  .btn-primary:hover{filter:brightness(1.06);}
+  .btn-ghost{border-color:transparent; background:transparent; box-shadow:none;}
+  .btn-ghost:hover{background:var(--blue-soft); box-shadow:none;}
+  .btn-danger{color:var(--rust); border-color:var(--rust);}
+  .btn-sm{font-size:.76rem; padding:6px 10px; border-radius:7px;}
+  .btn-block{width:100%; justify-content:center;}
+
+  .project-list{display:flex; flex-direction:column; gap:6px; overflow-y:auto; flex:1;}
+  .project-item{
+    position:relative;
+    border:1px solid transparent;
+    border-radius:8px;
+    padding:9px 10px 9px 14px;
+    cursor:pointer;
+    display:flex;
+    flex-direction:column;
+    gap:2px;
+    transition:background .12s;
+  }
+  .project-item::before{
+    content:"";
+    position:absolute; left:0; top:6px; bottom:6px; width:3px; border-radius:2px;
+    background:transparent;
+  }
+  .project-item:hover{background:var(--blue-soft);}
+  .project-item.active{background:var(--blue-soft); border-color:var(--line);}
+  .project-item.active::before{background:var(--blue);}
+  .project-item-top{display:flex; align-items:center; justify-content:space-between; gap:6px;}
+  .project-name-wrap{display:flex; align-items:center; gap:5px; min-width:0; overflow:hidden;}
+  .project-name{font-weight:600; font-size:.88rem; overflow:hidden; text-overflow:ellipsis; white-space:nowrap; min-width:0;}
+  .project-overdue-flag{
+    flex-shrink:0; display:inline-flex; align-items:center; justify-content:center;
+    width:15px; height:15px; border-radius:50%; background:var(--rust); color:#fff;
+    font-size:.68rem; font-weight:800; font-family:'IBM Plex Sans', sans-serif; line-height:1; cursor:default;
+  }
+  .project-meta{color:var(--ink-soft); font-size:.72rem;}
+  .example-tag{
+    display:inline-block; font-size:.62rem; letter-spacing:.06em; text-transform:uppercase;
+    background:var(--sage-soft); color:var(--sage); padding:1px 6px; border-radius:3px; margin-top:2px; width:fit-content;
+  }
+  .project-item-actions{display:flex; align-items:center; gap:2px; flex-shrink:0;}
+  .project-item .icon-btn{opacity:0; transition:opacity .12s;}
+  .project-item:hover .icon-btn, .project-item.active .icon-btn{opacity:1;}
+  .project-item .pin-btn.is-pinned{opacity:1;}
+  .icon-btn{
+    background:none; border:none; color:var(--ink-soft); cursor:pointer; padding:2px 4px; border-radius:4px; font-size:.75rem;
+  }
+  .icon-btn:hover{background:var(--paper); color:var(--rust);}
+  .pin-btn{font-size:.82rem;}
+  .pin-btn.is-pinned{color:var(--amber);}
+  .pin-btn.is-pinned:hover{color:var(--amber);}
+
+  .sidebar-foot{display:flex; flex-direction:column; gap:6px; border-top:1px solid var(--line); padding-top:12px;}
+  .storage-note{color:var(--ink-soft); font-size:.68rem; line-height:1.4;}
+
+  /* ---------- main ---------- */
+  .main{padding:26px 24px 40px; display:flex; flex-direction:column; gap:22px; max-width:1680px; min-width:0;}
+  .empty-state{color:var(--ink-soft); padding:60px 10px; text-align:center; font-size:.95rem;}
+
+  .project-header{display:flex; flex-direction:column; gap:14px;}
+  .title-input{
+    font-family:'Big Shoulders', sans-serif;
+    font-weight:700;
+    font-size:2.1rem;
+    letter-spacing:.01em;
+    background:transparent;
+    border:none;
+    border-bottom:2px solid transparent;
+    color:var(--ink);
+    padding:2px 1px 4px;
+    width:100%;
+    max-width:100%;
+  }
+  .title-input:hover{border-bottom-color:var(--line);}
+  .title-input:focus{border-bottom-color:var(--blue);}
+
+  .meta-row{display:flex; align-items:center; gap:22px; flex-wrap:wrap; font-size:.84rem;}
+  .field{display:flex; align-items:center; gap:8px;}
+  .field label{color:var(--ink-soft); font-size:.72rem; text-transform:uppercase; letter-spacing:.08em;}
+  .toggle{display:inline-flex; align-items:center; gap:8px; cursor:pointer; user-select:none;}
+  .toggle input{position:absolute; opacity:0; width:1px; height:1px;}
+  .toggle-track{width:34px; height:19px; border-radius:10px; background:var(--line); position:relative; transition:background .15s; flex-shrink:0;}
+  .toggle-thumb{position:absolute; top:2px; left:2px; width:15px; height:15px; border-radius:50%; background:var(--paper-raised); transition:left .15s; box-shadow:0 1px 2px var(--shadow);}
+  .toggle input:checked + .toggle-track{background:var(--blue);}
+  .toggle input:checked + .toggle-track .toggle-thumb{left:17px;}
+  .toggle input:focus-visible + .toggle-track{outline:2px solid var(--focus); outline-offset:2px;}
+  .toggle-label{font-size:.82rem; color:var(--ink);}
+
+  .summary-pill{
+    font-family:'IBM Plex Mono', monospace; font-size:.78rem; color:var(--ink-soft);
+    background:var(--paper-raised); border:1px solid var(--line); border-radius:20px; padding:6px 14px;
+  }
+  .summary-pill b{color:var(--ink); font-weight:600;}
+
+  .banner{
+    display:flex; gap:10px; align-items:flex-start;
+    background:var(--rust-soft); border:1px solid var(--rust); color:var(--rust);
+    border-radius:10px; padding:10px 14px; font-size:.84rem; line-height:1.5;
+  }
+  .banner strong{display:block; font-size:.84rem;}
+
+  .toolbar{display:flex; align-items:center; justify-content:space-between; gap:12px; flex-wrap:wrap;}
+  .toolbar-left{display:flex; gap:8px; align-items:center; flex-wrap:wrap;}
+  .toolbar-right{display:flex; gap:8px; align-items:center; flex-wrap:wrap;}
+
+  /* ---------- table ---------- */
+  .table-wrap{border:1px solid var(--line); border-radius:12px; overflow:auto; background:var(--paper-raised); box-shadow:0 1px 3px var(--shadow); min-width:0;}
+  table.task-table{border-collapse:collapse; width:100%; min-width:1100px;}
+  .task-table thead th{
+    position:sticky; top:0; background:var(--paper-raised); z-index:2;
+    text-align:left; font-size:.68rem; text-transform:uppercase; letter-spacing:.08em; color:var(--ink-soft);
+    font-weight:600; padding:10px 10px; border-bottom:1px solid var(--line);
+  }
+  .task-table td{padding:6px 10px; border-bottom:1px solid var(--line); vertical-align:middle; font-size:.86rem;}
+  .task-table tbody tr:last-child td{border-bottom:none;}
+  .task-table tbody tr.is-at-risk{background:color-mix(in srgb, var(--rust-soft) 45%, transparent);}
+  .task-table tbody tr.is-unscheduled{background:color-mix(in srgb, var(--rust-soft) 70%, transparent);}
+  .task-table tbody tr.is-group-row td{font-weight:600; border-bottom:1px solid var(--line-strong);}
+  .task-table tbody tr.is-selected td{background:var(--select-bg); box-shadow:inset 2px 0 0 var(--blue);}
+  .task-table thead th:last-child{position:sticky; right:0; z-index:3; box-shadow:-6px 0 6px -6px var(--shadow);}
+  .task-table tbody td:last-child{
+    position:sticky; right:0; z-index:1; background:var(--paper-raised);
+    box-shadow:-6px 0 6px -6px var(--shadow);
+  }
+  .task-table tbody tr.is-at-risk td:last-child{background:color-mix(in srgb, var(--rust-soft) 45%, var(--paper-raised));}
+  .task-table tbody tr.is-unscheduled td:last-child{background:color-mix(in srgb, var(--rust-soft) 70%, var(--paper-raised));}
+  .task-table tbody tr.is-selected td:last-child{background:var(--select-bg);}
+  .code-cell{font-family:'IBM Plex Mono', monospace; color:var(--ink-soft); white-space:nowrap;}
+  .code-cell-inner{display:inline-flex; align-items:center;}
+  .row-select-checkbox{width:13px; height:13px; margin:0 6px 0 0; flex-shrink:0; cursor:pointer; accent-color:var(--blue);}
+  .row-select-spacer{display:inline-block; width:13px; margin-right:6px; flex-shrink:0;}
+  .select-all-label{display:inline-flex; align-items:center; gap:5px; cursor:pointer;}
+  .select-all-label input{width:13px; height:13px; margin:0; cursor:pointer; accent-color:var(--blue);}
+  .bulk-bar{display:inline-flex; align-items:center; gap:8px; background:var(--blue-soft); border:1px solid var(--blue); border-radius:8px; padding:5px 6px 5px 12px;}
+  .bulk-count{font-size:.8rem; color:var(--blue); font-weight:600; white-space:nowrap;}
+  .risk-dot{display:inline-block; width:7px; height:7px; border-radius:50%; background:var(--rust); margin-right:5px; flex-shrink:0;}
+  .replan-badge{
+    display:inline-flex; align-items:center; justify-content:center; min-width:16px; height:14px; padding:0 3px;
+    border-radius:7px; background:var(--blue-soft); color:var(--blue); font-size:.64rem; font-weight:700;
+    margin-right:5px; flex-shrink:0; font-family:'IBM Plex Mono', monospace; line-height:1; cursor:default;
+  }
+  .name-cell{display:flex; align-items:center; gap:4px;}
+  .tree-toggle{background:none; border:none; color:var(--ink-soft); cursor:pointer; font-size:1.05rem; line-height:1; width:20px; flex-shrink:0; padding:0; text-align:center;}
+  .tree-toggle:hover{color:var(--blue);}
+  .tree-spacer{display:inline-block; width:20px; flex-shrink:0;}
+  .date-flag-wrap{display:flex; align-items:center; gap:4px; min-width:0;}
+  .due-flag{display:inline-flex; align-items:center; justify-content:center; flex-shrink:0; line-height:1;}
+  .due-flag-overdue{width:14px; height:14px; border-radius:50%; background:var(--rust); color:#fff; font-size:.68rem; font-weight:800; font-family:'IBM Plex Sans', sans-serif;}
+  .due-flag-soon{width:7px; height:7px; border-radius:50%; background:var(--amber); opacity:.85;}
+  .date-text.is-overdue{color:var(--rust); font-weight:700;}
+  .color-dot{width:14px; height:14px; border-radius:50%; border:1.5px dashed var(--line-strong); background:transparent; cursor:pointer; flex-shrink:0; padding:0;}
+  .color-dot.has-color{border-style:dashed;}
+  .color-dot.is-own{border-style:solid;}
+  .name-input{
+    width:100%; min-width:170px; background:transparent; border:1px solid transparent; border-radius:4px;
+    padding:5px 6px; font-size:.86rem; font-weight:inherit; color:var(--ink);
+  }
+  .name-input:hover{border-color:var(--line);}
+  .name-input:focus{border-color:var(--blue); background:var(--paper);}
+  .responsible-input{
+    width:100%; min-width:82px; background:transparent; border:1px solid transparent; border-radius:4px;
+    padding:5px 6px; font-size:.84rem; color:var(--ink);
+  }
+  .responsible-input:hover{border-color:var(--line);}
+  .responsible-input:focus{border-color:var(--blue); background:var(--paper);}
+  .notes-input{
+    width:100%; min-width:110px; background:transparent; border:1px solid transparent; border-radius:4px;
+    padding:5px 6px; font-size:.84rem; color:var(--ink);
+  }
+  .notes-input:hover{border-color:var(--line);}
+  .notes-input:focus{border-color:var(--blue); background:var(--paper);}
+  .dur-cell{display:flex; align-items:center; gap:2px;}
+  .dur-input{
+    width:44px; background:transparent; border:1px solid transparent; border-radius:4px; padding:5px 4px;
+    font-family:'IBM Plex Mono', monospace; color:var(--ink); text-align:right;
+  }
+  .dur-input:hover{border-color:var(--line);}
+  .dur-input:focus{border-color:var(--blue); background:var(--paper);}
+  .dur-unit{color:var(--ink-soft); font-size:.76rem; margin-left:2px; margin-right:2px;}
+  .dur-input::-webkit-inner-spin-button, .dur-input::-webkit-outer-spin-button,
+  .progress-input::-webkit-inner-spin-button, .progress-input::-webkit-outer-spin-button{-webkit-appearance:none; margin:0;}
+  .dur-input, .progress-input{-moz-appearance:textfield;}
+  .dur-readout{color:var(--ink); font-size:.86rem;}
+  .stepper{display:inline-flex; flex-direction:column; margin-right:2px; flex-shrink:0;}
+  .stepper-btn{
+    width:15px; height:10px; line-height:1; font-size:.5rem; padding:0; margin:0;
+    border:1px solid var(--line); background:var(--paper-raised); color:var(--ink-soft); cursor:pointer;
+    display:flex; align-items:center; justify-content:center;
+  }
+  .stepper-btn:first-child{border-radius:3px 3px 0 0; border-bottom:none;}
+  .stepper-btn:last-child{border-radius:0 0 3px 3px;}
+  .stepper-btn:hover{background:var(--blue-soft); color:var(--blue); border-color:var(--blue);}
+  .date-edit{display:flex; align-items:center; gap:2px;}
+  .date-input{
+    background:transparent; border:1px solid transparent; border-radius:6px; padding:5px 2px;
+    font-family:'IBM Plex Mono', monospace; font-size:.74rem; color:var(--ink); width:108px; cursor:pointer;
+  }
+  .date-input:hover{border-color:var(--line); background:var(--paper);}
+  .date-input:focus{border-color:var(--blue); background:var(--paper); cursor:auto;}
+  .date-input.is-overdue{color:var(--rust); font-weight:700;}
+  .date-clear-btn{
+    background:none; border:none; color:var(--blue); cursor:pointer; font-size:.85rem; line-height:1;
+    padding:2px; border-radius:4px; flex-shrink:0;
+  }
+  .date-clear-btn:hover{background:var(--blue-soft);}
+  /* Manual date entry: a plain text field (typeable, pasteable, copyable) sits next to the
+     real native <input type="date"> for picking visually. Native date-input segmented
+     editors are unreliable to type into directly and block copy/paste, so the visible
+     control for editing is always plain text — but the calendar picker itself has to be a
+     genuine, directly-clickable native date input (not a hidden proxy opened via
+     showPicker(), which isn't reliably available inside the sandboxed frame an Artifact
+     renders in). Shrinking that native input down and hiding its own text via the
+     -webkit-datetime-edit pseudo-element leaves just its built-in calendar icon, so it reads
+     as a small calendar button in Chromium browsers; other browsers fall back to a narrow
+     (but still fully functional) native date field. */
+  .date-field{display:inline-flex; align-items:center; gap:2px;}
+  .date-text-input{width:88px; cursor:text;}
+  .date-text-input:hover{cursor:text;}
+  .date-native-input{width:22px; min-width:22px; padding:5px 0; text-align:center;}
+  .date-native-input::-webkit-datetime-edit{display:none;}
+  .date-native-input::-webkit-inner-spin-button{display:none;}
+  .date-native-input::-webkit-calendar-picker-indicator{opacity:.65; cursor:pointer;}
+  .date-native-input:hover::-webkit-calendar-picker-indicator, .date-native-input:focus::-webkit-calendar-picker-indicator{opacity:1;}
+  .milestone-toggle-btn{
+    width:20px; height:20px; border:1px solid var(--line); border-radius:4px; background:none; color:var(--ink-soft);
+    cursor:pointer; display:inline-flex; align-items:center; justify-content:center; font-size:.72rem; flex-shrink:0; padding:0;
+  }
+  .milestone-toggle-btn:hover{border-color:var(--blue); color:var(--blue);}
+  .milestone-cell{display:flex; align-items:center; gap:4px;}
+  .milestone-icon-btn{
+    width:24px; height:24px; border:1px solid var(--line); border-radius:5px; background:var(--paper);
+    cursor:pointer; display:inline-flex; align-items:center; justify-content:center; padding:0; flex-shrink:0;
+  }
+  .milestone-icon-btn:hover{border-color:var(--blue);}
+  .deps-cell{display:flex; flex-wrap:wrap; gap:4px; align-items:center; min-width:110px;}
+  .chip{
+    display:inline-flex; align-items:center; gap:5px; background:var(--blue-soft); color:var(--blue);
+    font-family:'IBM Plex Mono', monospace; font-size:.72rem; padding:2px 4px 2px 8px; border-radius:4px;
+  }
+  .chip button{background:none; border:none; color:inherit; cursor:pointer; font-size:.85rem; line-height:1; padding:0 2px;}
+  .add-dep-btn{
+    width:22px; height:22px; border-radius:50%; border:1px dashed var(--line-strong); background:none;
+    color:var(--ink-soft); cursor:pointer; font-size:.85rem; line-height:1; display:inline-flex; align-items:center; justify-content:center; flex-shrink:0;
+  }
+  .add-dep-btn:hover{border-color:var(--blue); color:var(--blue);}
+  .date-cell{font-family:'IBM Plex Mono', monospace; font-size:.82rem; white-space:nowrap;}
+  .dash{color:var(--ink-soft);}
+  .dash-muted{color:var(--ink-soft); font-size:.78rem; white-space:nowrap;}
+  .row-actions{display:flex; align-items:center; justify-content:flex-end; gap:5px;}
+  .row-actions-left{display:flex; align-items:center; gap:2px; background:var(--paper); border:1px solid var(--line); border-radius:7px; padding:2px;}
+  .row-icon-btn{
+    background:var(--paper-raised); border:1px solid var(--line); color:var(--ink-soft); cursor:pointer; font-size:.74rem;
+    padding:0; border-radius:5px; line-height:1; width:21px; height:21px; display:inline-flex; align-items:center; justify-content:center; flex-shrink:0;
+  }
+  .row-actions-left .row-icon-btn{background:var(--paper-raised); border-color:transparent;}
+  .row-icon-btn:hover{background:var(--blue-soft); color:var(--blue); border-color:var(--blue);}
+  .row-icon-btn.danger{border-color:var(--line);}
+  .row-icon-btn.danger:hover{color:var(--rust); background:var(--rust-soft); border-color:var(--rust);}
+  .row-icon-btn.active-risk{background:var(--rust-soft); border-color:var(--rust); color:var(--rust);}
+  .row-icon-btn.active-risk:hover{background:var(--rust-soft); border-color:var(--rust); color:var(--rust); filter:brightness(0.96);}
+  .row-icon-spacer{display:inline-block; width:21px; height:21px; flex-shrink:0;}
+  .table-caption{color:var(--ink-soft); font-size:.76rem; padding:10px 2px 0; line-height:1.6;}
+
+  .progress-cell{display:flex; align-items:center; gap:4px;}
+  .progress-input{
+    width:40px; background:transparent; border:1px solid transparent; border-radius:4px; padding:5px 3px;
+    font-family:'IBM Plex Mono', monospace; color:var(--ink); text-align:right;
+  }
+  .progress-input:hover{border-color:var(--line);}
+  .progress-input:focus{border-color:var(--blue); background:var(--paper);}
+  .progress-track{width:30px; height:6px; border-radius:3px; background:var(--line); overflow:hidden; flex-shrink:0;}
+  .progress-fill-el{height:100%;}
+  .progress-check{display:flex; align-items:center; gap:6px; font-size:.78rem; color:var(--ink-soft); white-space:nowrap;}
+  .pct-unit{color:var(--ink-soft); font-size:.78rem; margin-left:1px; flex-shrink:0;}
+  .pct-done{color:var(--sage) !important; font-weight:600;}
+
+  .dep-menu{
+    position:fixed; z-index:60; background:var(--paper-raised); border:1px solid var(--line); border-radius:10px;
+    box-shadow:0 8px 24px var(--shadow); padding:8px; width:236px; max-height:280px; display:flex; flex-direction:column; gap:4px;
+  }
+  .dep-menu-title{font-size:.68rem; text-transform:uppercase; letter-spacing:.08em; color:var(--ink-soft); padding:2px 4px 4px;}
+  .dep-menu-list{overflow-y:auto; display:flex; flex-direction:column;}
+  .dep-menu-item{display:flex; align-items:center; gap:8px; padding:6px 6px; border-radius:5px; font-size:.82rem; cursor:pointer;}
+  .dep-menu-item:hover{background:var(--blue-soft);}
+  .dep-menu-item span.grp-tag{color:var(--ink-soft); font-size:.68rem;}
+  .dep-menu-empty{color:var(--ink-soft); font-size:.8rem; padding:8px 6px;}
+  .dep-menu-divider{border-top:1px solid var(--line); margin:2px 4px 4px;}
+  .dep-menu-foot{border-top:1px solid var(--line); margin-top:4px; padding-top:6px; display:flex; justify-content:flex-end;}
+  .color-menu-grid{display:grid; grid-template-columns:repeat(5,1fr); gap:6px; padding:4px; max-height:220px; overflow-y:auto;}
+  .color-swatch-btn{width:26px; height:26px; border-radius:50%; border:2px solid transparent; background:none; cursor:pointer; display:flex; align-items:center; justify-content:center; padding:0;}
+  .color-swatch-btn.selected{border-color:var(--ink);}
+  .color-swatch-dot{width:17px; height:17px; border-radius:50%; display:block;}
+  .color-swatch-auto{width:17px; height:17px; border-radius:50%; display:block; border:2px dashed var(--ink-soft);}
+  .milestone-menu-item{display:flex; align-items:center; gap:8px; padding:6px; border-radius:5px; cursor:pointer; font-size:.82rem; background:none; border:none; width:100%; text-align:left; color:var(--ink);}
+  .milestone-menu-item:hover{background:var(--blue-soft);}
+  .milestone-menu-item.selected{background:var(--blue-soft); font-weight:600;}
+  .milestone-menu-preview{width:22px; height:22px; flex-shrink:0;}
+
+  /* ---------- gantt ----------
+     The Gantt is meant to be exported/presented on its own (PNG, screenshots dropped into
+     slide decks), so it always renders on a neutral white surface with light-mode accent
+     colors — regardless of the app's own theme — by pinning the shared tokens locally. */
+  .gantt-panel{
+    --ink:#1F2933; --ink-soft:#5C6570; --paper:#FFFFFF; --paper-raised:#FFFFFF;
+    --line:#E4E1D8; --line-strong:#C9C4B8;
+    --blue:#2A5C8A; --blue-soft:#DCE7EF;
+    --rust:#B5502D; --rust-soft:#F3E1D8;
+    --sage:#5B7A6B; --sage-soft:#E1E9E4;
+    --weekend:rgba(31,41,51,.045);
+    --shadow:rgba(31,41,51,.08);
+    --focus:#2A5C8A;
+    border:1px solid var(--line); border-radius:12px; background:var(--paper); color:var(--ink); padding:18px 20px 20px;
+    display:flex; flex-direction:column; gap:14px; box-shadow:0 1px 3px var(--shadow);
+  }
+  .gantt-controls{display:flex; gap:22px; flex-wrap:wrap; align-items:center;}
+  .control-group{display:flex; align-items:center; gap:8px;}
+  .control-label{font-size:.68rem; text-transform:uppercase; letter-spacing:.08em; color:var(--ink-soft);}
+  .seg-group{display:inline-flex; border:1px solid var(--line); border-radius:8px; overflow:hidden;}
+  .seg-btn{font-family:'IBM Plex Sans', sans-serif; font-size:.76rem; padding:5px 10px; border:none; border-right:1px solid var(--line); background:var(--paper); color:var(--ink-soft); cursor:pointer;}
+  .seg-btn:last-child{border-right:none;}
+  .seg-btn.active{background:var(--blue); color:var(--paper-raised);}
+  .seg-btn:hover:not(.active){background:var(--blue-soft);}
+  .gantt-scroll{overflow:auto; border:1px solid var(--line); border-radius:10px; background:var(--paper);}
+  .gantt-grid{display:grid; grid-template-columns:220px 1fr;}
+  .gantt-labels{position:sticky; left:0; z-index:3; background:var(--paper); border-right:1px solid var(--line);}
+  /* Drag handle for resizing the name column: a child of .gantt-labels so it inherits its
+     sticky positioning and always sits right at the column's edge, even while scrolling. */
+  .gantt-resize-handle{position:absolute; top:0; right:-3px; bottom:0; width:6px; cursor:col-resize; z-index:4;}
+  .gantt-resize-handle:hover{background:var(--blue-soft);}
+  .gantt-label-row{
+    height:34px; display:flex; align-items:center; gap:5px; padding:0 10px; font-size:.78rem;
+    border-bottom:1px dashed var(--line); white-space:nowrap; overflow:hidden; text-overflow:ellipsis;
+  }
+  .gantt-label-header{border-bottom:1px solid var(--line);}
+  .gantt-label-name{overflow:hidden; text-overflow:ellipsis;}
+  .gantt-label-row.is-group .gantt-label-name{font-weight:600;}
+  .gantt-label-row.gantt-hover{background:var(--select-bg); border-radius:4px;}
+  .row-hover-band{fill:transparent; pointer-events:all;}
+  .gantt-row-g.gantt-hover .row-hover-band{fill:var(--select-bg);}
+
+  .legend{display:flex; flex-wrap:wrap; gap:16px; align-items:center; font-size:.78rem; color:var(--ink-soft);}
+  .legend-item{display:flex; align-items:center; gap:7px;}
+  .legend-swatch{width:20px; height:11px; border-radius:2px; display:inline-block; flex-shrink:0;}
+  .legend-swatch-track{background:var(--paper); border:1.5px solid var(--ink-soft);}
+  .legend-swatch-progress{background:var(--ink-soft); border:1px solid var(--ink-soft);}
+  .legend-swatch-hatch{background:var(--paper); background-image:repeating-linear-gradient(45deg, var(--rust) 0 2px, transparent 2px 5px); border:1px solid var(--rust);}
+  .legend-icon{width:14px; height:14px; display:inline-block; flex-shrink:0;}
+  .legend-line{width:16px; height:0; border-top:2px dashed var(--rust); display:inline-block;}
+
+  .gantt-footer{
+    display:flex; flex-wrap:wrap; gap:4px 18px; padding-top:10px; margin-top:2px;
+    border-top:1px solid var(--line); font-family:'IBM Plex Mono', monospace; font-size:.72rem; color:var(--ink-soft);
+  }
+  .gantt-footer b{color:var(--ink); font-weight:600;}
+
+  .axis-label{fill:var(--ink-soft); font:500 10.5px 'IBM Plex Mono', monospace;}
+  .axis-label-month{fill:var(--ink); font:600 11px 'IBM Plex Mono', monospace;}
+  .today-label{fill:var(--rust); font:600 9.5px 'IBM Plex Mono', monospace; letter-spacing:.05em;}
+  .grid-line{stroke:var(--line); stroke-width:1;}
+  .grid-line-strong{stroke:var(--line-strong); stroke-width:1;}
+  .grid-line-month{stroke:var(--ink-soft); stroke-width:1.4;}
+  .weekend-rect{fill:var(--weekend);}
+  .today-line{stroke:var(--rust); stroke-width:1.6; stroke-dasharray:4 3;}
+  .bar-track-normal{fill:var(--blue-soft); stroke:var(--blue); stroke-width:1;}
+  .bar-progress-normal{fill:var(--blue);}
+  .bar-track-risk{fill:var(--rust-soft); stroke:var(--rust); stroke-width:1;}
+  .bar-progress-risk{fill:var(--rust);}
+  .bar-track-group{fill:color-mix(in srgb, var(--ink-soft) 22%, var(--paper)); stroke:var(--ink-soft); stroke-width:1;}
+  .bar-progress-group{fill:var(--ink-soft);}
+  .hatch-overlay{fill:url(#hatch-critical-lines);}
+  .hatch-line{stroke:var(--rust); stroke-width:1.4; opacity:.65;}
+  .dep-line{stroke:var(--ink-soft); stroke-width:1; fill:none; opacity:.45;}
+  .arrow-head{fill:var(--ink-soft); opacity:.45;}
+  .pct-label{fill:var(--ink-soft); font:500 10px 'IBM Plex Mono', monospace;}
+  .milestone-label{fill:var(--ink); font:600 10.5px 'IBM Plex Sans', sans-serif;}
+  .milestone-date-label{fill:var(--ink-soft); font:500 9px 'IBM Plex Mono', monospace;}
+  .leader-line{stroke:var(--line-strong); stroke-width:1; opacity:.55;}
+
+  /* ---------- restore modal ---------- */
+  .modal-overlay{position:fixed; inset:0; background:rgba(20,24,28,.45); display:flex; align-items:center; justify-content:center; z-index:100; padding:20px;}
+  .modal{background:var(--paper-raised); border:1px solid var(--line); border-radius:10px; padding:22px; width:100%; max-width:480px; display:flex; flex-direction:column; gap:12px; box-shadow:0 20px 50px var(--shadow);}
+  .modal h2{font-family:'Big Shoulders', sans-serif; font-size:1.3rem; margin:0;}
+  .modal p{font-size:.84rem; color:var(--ink-soft); margin:0; line-height:1.5;}
+  .modal textarea{
+    width:100%; min-height:130px; font-family:'IBM Plex Mono', monospace; font-size:.76rem; color:var(--ink);
+    background:var(--paper); border:1px solid var(--line); border-radius:6px; padding:10px; resize:vertical;
+  }
+  .modal-error{color:var(--rust); font-size:.8rem;}
+  .modal-actions{display:flex; justify-content:flex-end; gap:8px;}
+  .toast{
+    position:fixed; bottom:22px; left:50%; transform:translateX(-50%); background:var(--ink); color:var(--paper);
+    padding:9px 18px; border-radius:20px; font-size:.82rem; z-index:120; box-shadow:0 8px 20px var(--shadow); max-width:80vw; text-align:center;
+  }
+
+  @media (max-width: 860px){
+    .app{grid-template-columns:1fr;}
+    .sidebar{min-height:auto; border-right:none; border-bottom:1px solid var(--line); flex-direction:row; align-items:center; flex-wrap:wrap;}
+    .project-list{flex-direction:row; overflow-x:auto; flex:none; width:100%;}
+    .project-item{min-width:170px;}
+    .main{padding:22px 16px 40px;}
+  }
+</style>
+
+<div id="root" class="app"></div>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
+<script>
+(function(){
+  "use strict";
+  var STORAGE_KEY = "tracado.v1";
+  var root = document.getElementById("root");
+
+  var SWATCHES = [
+    {key:"blue", label:"Azul", hex:"#2E6B9E"},
+    {key:"blue-light", label:"Azul claro", hex:"#4F8FC0"},
+    {key:"navy", label:"Azul marinho", hex:"#1F3B57"},
+    {key:"red", label:"Vermelho", hex:"#B8393C"},
+    {key:"rust", label:"Ferrugem", hex:"#B5502D"},
+    {key:"terracotta", label:"Terracota", hex:"#BF6A4D"},
+    {key:"amber", label:"Âmbar", hex:"#C08A2E"},
+    {key:"sage", label:"Sálvia", hex:"#4F7A63"},
+    {key:"teal", label:"Petróleo", hex:"#2E7D7B"},
+    {key:"plum", label:"Ameixa", hex:"#7B5590"},
+    {key:"gray-light", label:"Cinza claro", hex:"#8D9299"},
+    {key:"slate", label:"Grafite", hex:"#5B6470"},
+    {key:"gray-dark", label:"Cinza escuro", hex:"#3A3F45"},
+    {key:"black", label:"Preto", hex:"#17181A"}
+  ];
+  function swatchHex(key){ var s = SWATCHES.filter(function(x){ return x.key === key; })[0]; return s ? s.hex : null; }
+  function hexToRgba(hex, alpha){
+    hex = (hex||"").replace("#","");
+    if(hex.length === 3) hex = hex.split("").map(function(c){ return c+c; }).join("");
+    var r = parseInt(hex.slice(0,2),16), g = parseInt(hex.slice(2,4),16), b = parseInt(hex.slice(4,6),16);
+    return "rgba("+r+","+g+","+b+","+alpha+")";
+  }
+  // Blends a hex color toward white by `amount` (0-1) — used to give a subtask a lighter
+  // tint of its group's color when it hasn't been given a color of its own.
+  function lightenHex(hex, amount){
+    hex = (hex||"").replace("#","");
+    if(hex.length === 3) hex = hex.split("").map(function(c){ return c+c; }).join("");
+    var r = parseInt(hex.slice(0,2),16), g = parseInt(hex.slice(2,4),16), b = parseInt(hex.slice(4,6),16);
+    function mix(c){ return Math.round(c + (255-c)*amount); }
+    function toHex2(n){ var s = n.toString(16); return s.length < 2 ? "0"+s : s; }
+    return "#"+toHex2(mix(r))+toHex2(mix(g))+toHex2(mix(b));
+  }
+  // Resolves the color a task should actually be painted with: its own explicit color if it
+  // has one, otherwise a lightened tint of the nearest ancestor group's color (so setting a
+  // color on a group visually tints all its subtasks, while any subtask can still override
+  // that with its own explicit pick). Returns null when neither the task nor any ancestor
+  // has a color set, so callers fall back to their normal default coloring.
+  function effectiveColorHex(t, tasksById){
+    if(t.color){ return swatchHex(t.color); }
+    var cur = t, guard = 0;
+    while(cur && cur.parentId && guard < 60){
+      cur = tasksById.get(cur.parentId);
+      guard++;
+      if(cur && cur.color) return lightenHex(swatchHex(cur.color), 0.55);
+    }
+    return null;
+  }
+
+  var MILESTONE_ICONS = [
+    {key:"diamond", label:"Diamante"},
+    {key:"flag", label:"Bandeira"},
+    {key:"pin", label:"Pin"},
+    {key:"star", label:"Estrela"}
+  ];
+  function milestoneShapeSvg(shapeKey, cx, cy, s, paint){
+    var style = 'style="fill:'+paint.fill+'; stroke:'+paint.stroke+'; stroke-width:'+paint.strokeWidth+';"';
+    if(shapeKey === "flag"){
+      var poleX = (cx - s*0.7), topY = (cy-s), botY = (cy+s), tipX = (cx+s*0.9), tipY = (cy - s*0.15);
+      return '<path d="M '+poleX+' '+topY+' L '+poleX+' '+botY+'" style="fill:none; stroke:'+paint.stroke+'; stroke-width:1.6;"></path>' +
+             '<path d="M '+poleX+' '+topY+' L '+tipX+' '+tipY+' L '+poleX+' '+cy+' Z" '+style+'></path>';
+    }
+    if(shapeKey === "pin"){
+      var r = s*0.62;
+      return '<circle cx="'+cx+'" cy="'+(cy-s*0.15)+'" r="'+r+'" '+style+'></circle>' +
+             '<path d="M '+(cx-s*0.42)+' '+(cy+s*0.15)+' L '+(cx+s*0.42)+' '+(cy+s*0.15)+' L '+cx+' '+(cy+s)+' Z" '+style+'></path>';
+    }
+    if(shapeKey === "star"){
+      var pts = [];
+      for(var k=0;k<10;k++){
+        var ang = (-90 + k*36) * Math.PI/180;
+        var rad = (k%2===0) ? s : s*0.42;
+        pts.push((cx+rad*Math.cos(ang)).toFixed(1)+","+(cy+rad*Math.sin(ang)).toFixed(1));
+      }
+      return '<polygon points="'+pts.join(" ")+'" '+style+'></polygon>';
+    }
+    return '<polygon points="'+cx+','+(cy-s)+' '+(cx+s)+','+cy+' '+cx+','+(cy+s)+' '+(cx-s)+','+cy+'" '+style+'></polygon>';
+  }
+  function resolveMilestonePaint(colorHex, done){
+    if(colorHex) return { fill: done ? colorHex : "var(--paper)", stroke: colorHex, strokeWidth: done?1.5:2 };
+    return { fill: done ? "var(--sage)" : "var(--paper)", stroke: "var(--sage)", strokeWidth: done?1.5:2 };
+  }
+
+  var ui = {
+    pendingDelete: null,      // {kind, id}
+    popover: null,            // {type:'dep'|'color'|'milestoneIcon', taskId, pos:{top,left}}
+    selectedTaskId: null,
+    focusNextId: null,
+    showRestore: false,
+    restoreText: "",
+    restoreError: null,
+    showQuickAdd: false,
+    quickAddText: "",
+    quickAddError: null,
+    focusQuickAdd: false,
+    projectSearch: "",
+    toast: null,
+    bulkSelectedIds: new Set()
+  };
+  var toastTimer = null;
+  var pendingDeleteTimer = null;
+
+  // ---------------- date utilities ----------------
+  function pad(n){ return String(n).padStart(2,"0"); }
+  function toISO(d){ return d.getFullYear()+"-"+pad(d.getMonth()+1)+"-"+pad(d.getDate()); }
+  function parseISO(s){
+    var parts = s.split("-").map(Number);
+    return new Date(parts[0], parts[1]-1, parts[2]);
+  }
+  // Builds an ISO (yyyy-mm-dd) string from separate parts, rejecting anything that doesn't
+  // round-trip through Date (e.g. day 31 in a 30-day month) so a typo doesn't silently
+  // become a different date.
+  function isoFromDateParts(year, month, day){
+    if(month < 1 || month > 12 || day < 1 || day > 31) return null;
+    var d = new Date(year, month - 1, day);
+    if(d.getFullYear() !== year || d.getMonth() !== month - 1 || d.getDate() !== day) return null;
+    return toISO(d);
+  }
+  // Parses a manually typed or pasted date in the formats people actually use here:
+  // dd/mm/aaaa (or -, ., with a 2-digit year) matching how dates are shown throughout the
+  // app, plus aaaa-mm-dd (ISO, e.g. copied straight from another date field's value).
+  // Returns an ISO string ready to assign to an <input type="date">, or null if unrecognized.
+  function parseFlexibleDate(raw){
+    if(!raw) return null;
+    var s = String(raw).trim();
+    if(!s) return null;
+    var m = s.match(/^(\d{4})[\/\-\.](\d{1,2})[\/\-\.](\d{1,2})$/);
+    if(m) return isoFromDateParts(Number(m[1]), Number(m[2]), Number(m[3]));
+    m = s.match(/^(\d{1,2})[\/\-\.](\d{1,2})[\/\-\.](\d{2,4})$/);
+    if(m){
+      var year = Number(m[3]);
+      if(year < 100) year += 2000;
+      return isoFromDateParts(year, Number(m[2]), Number(m[1]));
+    }
+    return null;
+  }
+  // Formats an ISO (yyyy-mm-dd) string as dd/mm/aaaa for the manual-entry text field, or ""
+  // when there's no date — mirrors fmtFull but takes/returns strings so callers with an ISO
+  // value (or none) don't need to round-trip through parseISO themselves.
+  function fmtDateBR(iso){
+    if(!iso) return "";
+    return fmtFull(parseISO(iso));
+  }
+  function addDays(d, n){ var r = new Date(d); r.setDate(r.getDate()+n); return r; }
+  function isWeekend(d){ var wd = d.getDay(); return wd === 0 || wd === 6; }
+  function daysBetween(a, b){ return Math.round((new Date(b).setHours(0,0,0,0) - new Date(a).setHours(0,0,0,0)) / 86400000); }
+  var MESES = ["jan","fev","mar","abr","mai","jun","jul","ago","set","out","nov","dez"];
+  function fmtShort(d){ return d.getDate()+" "+MESES[d.getMonth()]; }
+  function fmtFull(d){ return pad(d.getDate())+"/"+pad(d.getMonth()+1)+"/"+d.getFullYear(); }
+  function fmtMonth(d){ var m = MESES[d.getMonth()]; return m.charAt(0).toUpperCase()+m.slice(1)+" "+String(d.getFullYear()).slice(2); }
+  function todayDate(){ var t = new Date(); t.setHours(0,0,0,0); return t; }
+  function indexOfDateOrAfter(seq, targetDate){
+    var tt = new Date(targetDate).setHours(0,0,0,0);
+    for(var i=0;i<seq.length;i++){ if(seq[i].getTime() >= tt) return i; }
+    return seq.length - 1;
+  }
+
+  function generateWorkingDates(start, count, businessOnly){
+    var dates = [];
+    var cursor = new Date(start);
+    var guard = 0;
+    while(dates.length < count && guard < count*4 + 30){
+      guard++;
+      if(!businessOnly || !isWeekend(cursor)) dates.push(new Date(cursor));
+      cursor = addDays(cursor, 1);
+    }
+    return dates;
+  }
+
+  function genId(){
+    if(window.crypto && crypto.randomUUID) return crypto.randomUUID();
+    return "id-"+Date.now()+"-"+Math.random().toString(16).slice(2);
+  }
+
+  function slugify(s){
+    return (s||"cronograma").normalize("NFD").replace(/[\u0300-\u036f]/g,"").toLowerCase()
+      .replace(/[^a-z0-9]+/g,"-").replace(/(^-+|-+$)/g,"") || "cronograma";
+  }
+
+  function esc(s){
+    return String(s == null ? "" : s).replace(/[&<>"']/g, function(c){
+      return ({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"})[c];
+    });
+  }
+
+  // ---------------- hierarchy helpers ----------------
+  function buildChildrenMap(tasks){
+    var map = new Map();
+    tasks.forEach(function(t){ map.set(t.id, []); });
+    tasks.forEach(function(t){
+      if(t.parentId && map.has(t.parentId)) map.get(t.parentId).push(t);
+    });
+    return map;
+  }
+  function isGroupTask(id, childrenMap){
+    var c = childrenMap.get(id);
+    return !!(c && c.length);
+  }
+  function leafDescendants(id, childrenMap){
+    var kids = childrenMap.get(id) || [];
+    if(!kids.length) return [id];
+    var res = [];
+    kids.forEach(function(k){ res = res.concat(leafDescendants(k.id, childrenMap)); });
+    return res;
+  }
+  function allDescendantIds(id, childrenMap){
+    var kids = childrenMap.get(id) || [];
+    var res = [];
+    kids.forEach(function(k){ res.push(k.id); res = res.concat(allDescendantIds(k.id, childrenMap)); });
+    return res;
+  }
+  function expandDepsForLeaf(task, tasksById, childrenMap){
+    var raw = task.deps || [];
+    var out = [];
+    raw.forEach(function(depId){
+      if(depId === task.id) return;
+      if(!tasksById.has(depId)) return;
+      if(isGroupTask(depId, childrenMap)){
+        leafDescendants(depId, childrenMap).forEach(function(lid){ if(lid !== task.id) out.push(lid); });
+      } else {
+        out.push(depId);
+      }
+    });
+    return Array.from(new Set(out));
+  }
+
+  // ---------------- display order (pure hierarchy + array order, no auto-sorting) ----------------
+  function buildDisplayRows(project){
+    var tasksById = new Map(project.tasks.map(function(t){ return [t.id, t]; }));
+    var childrenMap = buildChildrenMap(project.tasks);
+    var rows = [];
+    function pushSubtree(taskId, depth){
+      var t = tasksById.get(taskId);
+      if(!t) return;
+      rows.push({ task:t, depth:depth });
+      if(isGroupTask(taskId, childrenMap) && !t.collapsed){
+        childrenMap.get(taskId).forEach(function(k){ pushSubtree(k.id, depth+1); });
+      }
+    }
+    var topLevel = project.tasks.filter(function(t){ return !t.parentId || !tasksById.has(t.parentId); });
+    topLevel.forEach(function(t){ pushSubtree(t.id, 0); });
+    return rows;
+  }
+  function hasPrevSibling(rows, idx){
+    var depth = rows[idx].depth;
+    for(var i=idx-1;i>=0;i--){ if(rows[i].depth < depth) return false; if(rows[i].depth === depth) return true; }
+    return false;
+  }
+  function hasNextSibling(rows, idx){
+    var depth = rows[idx].depth;
+    for(var i=idx+1;i<rows.length;i++){ if(rows[i].depth < depth) return false; if(rows[i].depth === depth) return true; }
+    return false;
+  }
+  function prevSiblingId(rows, idx){
+    var depth = rows[idx].depth;
+    for(var i=idx-1;i>=0;i--){ if(rows[i].depth < depth) return null; if(rows[i].depth === depth) return rows[i].task.id; }
+    return null;
+  }
+  function nextSiblingId(rows, idx){
+    var depth = rows[idx].depth;
+    for(var i=idx+1;i<rows.length;i++){ if(rows[i].depth < depth) return null; if(rows[i].depth === depth) return rows[i].task.id; }
+    return null;
+  }
+
+  // relocate the block [id + its descendants] to just after the block [afterId + its (current) descendants]
+  function relocateSubtreeAfter(tasksArr, id, afterId){
+    var childrenMap = buildChildrenMap(tasksArr);
+    var blockIds = new Set([id].concat(allDescendantIds(id, childrenMap)));
+    var blockItems = tasksArr.filter(function(t){ return blockIds.has(t.id); });
+    var rest = tasksArr.filter(function(t){ return !blockIds.has(t.id); });
+    var restChildrenMap = buildChildrenMap(rest);
+    var afterBlockIds = new Set([afterId].concat(allDescendantIds(afterId, restChildrenMap)));
+    var insertPos = -1;
+    rest.forEach(function(t,i){ if(afterBlockIds.has(t.id)) insertPos = i; });
+    if(insertPos === -1) insertPos = rest.length - 1;
+    var newArr = rest.slice(0, insertPos+1).concat(blockItems, rest.slice(insertPos+1));
+    tasksArr.length = 0;
+    newArr.forEach(function(t){ tasksArr.push(t); });
+  }
+  // relocate the block [id + its descendants] to just before the block [beforeId + its (current) descendants]
+  function relocateSubtreeBefore(tasksArr, id, beforeId){
+    var childrenMap = buildChildrenMap(tasksArr);
+    var blockIds = new Set([id].concat(allDescendantIds(id, childrenMap)));
+    var blockItems = tasksArr.filter(function(t){ return blockIds.has(t.id); });
+    var rest = tasksArr.filter(function(t){ return !blockIds.has(t.id); });
+    var restChildrenMap = buildChildrenMap(rest);
+    var beforeBlockIds = new Set([beforeId].concat(allDescendantIds(beforeId, restChildrenMap)));
+    var insertPos = rest.findIndex(function(t){ return beforeBlockIds.has(t.id); });
+    if(insertPos === -1) insertPos = rest.length;
+    var newArr = rest.slice(0, insertPos).concat(blockItems, rest.slice(insertPos));
+    tasksArr.length = 0;
+    newArr.forEach(function(t){ tasksArr.push(t); });
+  }
+
+  function indentTask(proj, taskId){
+    var rows = buildDisplayRows(proj);
+    var idx = rows.findIndex(function(r){ return r.task.id === taskId; });
+    if(idx < 0) return false;
+    var target = prevSiblingId(rows, idx);
+    if(!target) return false;
+    var task = proj.tasks.filter(function(t){ return t.id === taskId; })[0];
+    task.parentId = target;
+    relocateSubtreeAfter(proj.tasks, taskId, target);
+    var parentTask = proj.tasks.filter(function(t){ return t.id === target; })[0];
+    if(parentTask) parentTask.collapsed = false;
+    return true;
+  }
+  function outdentTask(proj, taskId){
+    var task = proj.tasks.filter(function(t){ return t.id === taskId; })[0];
+    if(!task || !task.parentId) return false;
+    var parentId = task.parentId;
+    var parentTask = proj.tasks.filter(function(t){ return t.id === parentId; })[0];
+    var grandParentId = parentTask ? (parentTask.parentId || null) : null;
+    task.parentId = grandParentId;
+    relocateSubtreeAfter(proj.tasks, taskId, parentId);
+    return true;
+  }
+  function moveTask(proj, taskId, direction){
+    var rows = buildDisplayRows(proj);
+    var idx = rows.findIndex(function(r){ return r.task.id === taskId; });
+    if(idx < 0) return false;
+    if(direction < 0){
+      var target = prevSiblingId(rows, idx);
+      if(!target) return false;
+      relocateSubtreeBefore(proj.tasks, taskId, target);
+    } else {
+      var target2 = nextSiblingId(rows, idx);
+      if(!target2) return false;
+      relocateSubtreeAfter(proj.tasks, taskId, target2);
+    }
+    return true;
+  }
+
+  // ---------------- CPM scheduling engine (operates on leaf tasks only) ----------------
+  // anchorsByIso: optional Map(taskId -> ISO date string) — a manually-set start date that
+  // acts as a floor on that task's earliest start (it can still be pushed later by
+  // predecessors, but never earlier than the calendar allows).
+  function computeSchedule(tasks, businessOnly, startDateISO, anchorsByIso){
+    var startDate = parseISO(startDateISO);
+    var seq = generateWorkingDates(startDate, 3000, businessOnly);
+    if(!tasks.length){
+      return { byId:new Map(), unscheduledIds:[], projectDuration:0, projectStartDate:startDate, projectEndDate:startDate, workingDates:seq };
+    }
+    var idSet = new Set(tasks.map(function(t){ return t.id; }));
+    var deps = new Map();
+    tasks.forEach(function(t){
+      var clean = Array.from(new Set((t.deps||[]).filter(function(d){ return idSet.has(d) && d !== t.id; })));
+      deps.set(t.id, clean);
+    });
+    var indegree = new Map(tasks.map(function(t){ return [t.id, deps.get(t.id).length]; }));
+    var successors = new Map(tasks.map(function(t){ return [t.id, []]; }));
+    tasks.forEach(function(t){ deps.get(t.id).forEach(function(d){ successors.get(d).push(t.id); }); });
+
+    var anchorIdx = new Map();
+    if(anchorsByIso){
+      anchorsByIso.forEach(function(iso, taskId){
+        if(idSet.has(taskId) && iso) anchorIdx.set(taskId, indexOfDateOrAfter(seq, parseISO(iso)));
+      });
+    }
+
+    var durById = new Map(tasks.map(function(t){ return [t.id, Math.max(0, Math.round(Number(t.duration) || 0))]; }));
+    var ES = new Map(tasks.map(function(t){ return [t.id, 0]; }));
+    var EF = new Map();
+    var queue = tasks.filter(function(t){ return indegree.get(t.id) === 0; }).map(function(t){ return t.id; });
+    var order = [];
+    while(queue.length){
+      var u = queue.shift();
+      order.push(u);
+      if(anchorIdx.has(u)) ES.set(u, Math.max(ES.get(u), anchorIdx.get(u)));
+      var esu = ES.get(u);
+      var efu = esu + durById.get(u);
+      EF.set(u, efu);
+      successors.get(u).forEach(function(v){
+        ES.set(v, Math.max(ES.get(v), efu));
+        indegree.set(v, indegree.get(v) - 1);
+        if(indegree.get(v) === 0) queue.push(v);
+      });
+    }
+    var scheduledSet = new Set(order);
+    var unscheduledIds = tasks.filter(function(t){ return !scheduledSet.has(t.id); }).map(function(t){ return t.id; });
+    var projectDuration = order.length ? Math.max.apply(null, order.map(function(id){ return EF.get(id); })) : 0;
+
+    var LF = new Map(), LS = new Map();
+    for(var i = order.length - 1; i >= 0; i--){
+      var uid = order[i];
+      var succsScheduled = successors.get(uid).filter(function(v){ return scheduledSet.has(v); });
+      var lf = succsScheduled.length ? Math.min.apply(null, succsScheduled.map(function(v){ return LS.get(v); })) : projectDuration;
+      LF.set(uid, lf);
+      LS.set(uid, lf - durById.get(uid));
+    }
+
+    var workingDates = seq;
+    var byId = new Map();
+    order.forEach(function(id){
+      var es = ES.get(id), ef = EF.get(id), ls = LS.get(id), lf = LF.get(id), dur = durById.get(id);
+      var startD = workingDates[es];
+      var endD = dur > 0 ? workingDates[Math.max(ef - 1, es)] : workingDates[es];
+      byId.set(id, { scheduled:true, es:es, ef:ef, ls:ls, lf:lf, slack: ls - es, critical:(ls - es) === 0, startDate:startD, endDate:endD, duration:dur, deps:deps.get(id) });
+    });
+    unscheduledIds.forEach(function(id){
+      byId.set(id, { scheduled:false, duration: durById.get(id), deps: deps.get(id) });
+    });
+    var projectEndDate = order.length ? workingDates[Math.max(projectDuration - 1, 0)] : startDate;
+    return { byId:byId, unscheduledIds:unscheduledIds, projectDuration:projectDuration, projectStartDate:startDate, projectEndDate:projectEndDate, workingDates:workingDates };
+  }
+
+  // ---------------- full schedule (leaves + group aggregation) ----------------
+  function computeFullSchedule(project){
+    var tasks = project.tasks;
+    var tasksById = new Map(tasks.map(function(t){ return [t.id, t]; }));
+    var childrenMap = buildChildrenMap(tasks);
+    var leaves = tasks.filter(function(t){ return !isGroupTask(t.id, childrenMap); });
+    var leafInputs = leaves.map(function(t){ return { id:t.id, duration:t.duration, deps: expandDepsForLeaf(t, tasksById, childrenMap) }; });
+    var anchorsByIso = new Map();
+    leaves.forEach(function(t){ if(t.startOverride) anchorsByIso.set(t.id, t.startOverride); });
+    var core = computeSchedule(leafInputs, project.businessDaysOnly, project.startDate, anchorsByIso);
+
+    var groupCache = new Map();
+    function aggFor(id){
+      if(groupCache.has(id)) return groupCache.get(id);
+      var result;
+      if(!isGroupTask(id, childrenMap)){
+        result = core.byId.get(id) || { scheduled:false };
+      } else {
+        var kids = childrenMap.get(id);
+        var starts = [], ends = [], anyCritical = false, wsum = 0, dsum = 0, allSched = true;
+        kids.forEach(function(k){
+          var a = aggFor(k.id);
+          if(!a || !a.scheduled){ allSched = false; return; }
+          starts.push(a.startDate); ends.push(a.endDate);
+          if(a.critical) anyCritical = true;
+          var kTask = tasksById.get(k.id);
+          var kProgress = isGroupTask(k.id, childrenMap) ? a.progress : (kTask.progress || 0);
+          var w = Math.max(a.duration || 0, 1);
+          wsum += kProgress * w; dsum += w;
+        });
+        if(!starts.length || !allSched){
+          result = { scheduled:false };
+        } else {
+          var minS = starts.reduce(function(x,y){ return x < y ? x : y; });
+          var maxE = ends.reduce(function(x,y){ return x > y ? x : y; });
+          result = { scheduled:true, startDate:minS, endDate:maxE, critical:anyCritical, duration: daysBetween(minS,maxE)+1, progress: dsum ? Math.round(wsum/dsum) : 0, slack:null };
+        }
+      }
+      groupCache.set(id, result);
+      return result;
+    }
+    tasks.forEach(function(t){ aggFor(t.id); });
+
+    return {
+      core: core,
+      childrenMap: childrenMap,
+      tasksById: tasksById,
+      isGroup: function(id){ return isGroupTask(id, childrenMap); },
+      infoFor: function(id){
+        var base = groupCache.get(id);
+        if(!base) return { scheduled:false, isGroup:false };
+        if(isGroupTask(id, childrenMap)) return Object.assign({ isGroup:true }, base);
+        var t = tasksById.get(id);
+        return Object.assign({ isGroup:false, progress: t ? (t.progress||0) : 0 }, base);
+      }
+    };
+  }
+
+  // Whether a project has at least one activity (leaf or group) whose computed end date has
+  // already passed while it's still not 100% complete. Unlike the per-row "Sinalizar prazos"
+  // highlighting, this check is independent of that display toggle — it's meant to surface a
+  // persistent "something here is late" warning in the sidebar project list regardless of how
+  // that individual project's own display options are configured.
+  function projectHasOverdueTask(project, full){
+    var today = todayDate();
+    return project.tasks.some(function(t){
+      var info = full.infoFor(t.id);
+      if(!info.scheduled || (info.progress||0) >= 100) return false;
+      var endD = new Date(info.endDate); endD.setHours(0,0,0,0);
+      return endD < today;
+    });
+  }
+
+  function taskLabel(idx){ return "T"+(idx+1); }
+
+  // ---------------- replanning tracking ----------------
+  // When enabled, the first time a task's computed dates are observed they become its
+  // "baseline" (the reference plan). From then on, every time the computed start/end
+  // actually shifts from what was last observed (a duration edit, a predecessor slipping,
+  // a manual date override...) the task's replanCount goes up by one — regardless of what
+  // caused the shift. "Aceitar novo baseline" (accept-baseline action) resets the baseline
+  // to the current dates and zeroes the counter once the new plan is validated.
+  function reconcileReplan(p, full){
+    if(!p.replanEnabled) return false;
+    var changed = false;
+    p.tasks.forEach(function(t){
+      var info = full.infoFor(t.id);
+      if(!info.scheduled) return;
+      var curStart = toISO(info.startDate), curEnd = toISO(info.endDate);
+      if(!t.baselineStart || !t.baselineEnd){
+        t.baselineStart = curStart;
+        t.baselineEnd = curEnd;
+        t.lastSeenStart = curStart;
+        t.lastSeenEnd = curEnd;
+        t.replanCount = t.replanCount || 0;
+        changed = true;
+        return;
+      }
+      if(t.lastSeenStart !== curStart || t.lastSeenEnd !== curEnd){
+        t.replanCount = (t.replanCount || 0) + 1;
+        t.lastSeenStart = curStart;
+        t.lastSeenEnd = curEnd;
+        changed = true;
+      }
+    });
+    return changed;
+  }
+
+  // ---------------- storage ----------------
+  function defaultTask(over){
+    return Object.assign({ id:genId(), name:"Nova atividade", duration:1, deps:[], parentId:null, collapsed:false, color:null, responsible:"", notes:"", progress:0, milestoneIcon:null, startOverride:null, atRisk:false, baselineStart:null, baselineEnd:null, lastSeenStart:null, lastSeenEnd:null, replanCount:0 }, over||{});
+  }
+
+  function seedState(){
+    var start = todayDate();
+    var g1="g1", g2="g2", g3="g3";
+    var t1="t1",t2="t2",t3="t3",t4="t4",t5="t5",t6="t6",t7="t7",t8="t8",t9="t9";
+    function t(over){ return defaultTask(over); }
+    var tasks = [
+      t({id:g1, name:"Fase 1 — Descoberta e design", duration:0, deps:[]}),
+      t({id:t1, name:"Levantamento de requisitos", duration:3, deps:[], parentId:g1, responsible:"Marina", progress:100}),
+      t({id:t2, name:"Wireframes", duration:2, deps:[t1], parentId:g1, responsible:"Marina", progress:100}),
+      t({id:g2, name:"Fase 2 — Produção", duration:0, deps:[]}),
+      t({id:t3, name:"Design visual", duration:4, deps:[t2], parentId:g2, responsible:"Diego", progress:55, color:"plum", notes:"Aguardando aprovação da identidade visual com o cliente."}),
+      t({id:t4, name:"Conteúdo e redação", duration:3, deps:[t1], parentId:g2, responsible:"Renata", progress:80}),
+      t({id:t5, name:"Desenvolvimento front-end", duration:6, deps:[t3], parentId:g2, responsible:"Diego", progress:15}),
+      t({id:t6, name:"Integração com back-end", duration:4, deps:[t5], parentId:g2, responsible:"Diego", progress:0, notes:"Depende da API do time de infraestrutura ficar pronta."}),
+      t({id:g3, name:"Fase 3 — Lançamento", duration:0, deps:[]}),
+      t({id:t7, name:"Testes de QA", duration:3, deps:[t6,t4], parentId:g3, responsible:"Renata", progress:0}),
+      t({id:t8, name:"Ajustes finais", duration:2, deps:[t7], parentId:g3, responsible:"Marina", progress:0}),
+      t({id:t9, name:"Publicação", duration:0, deps:[t8], parentId:g3, responsible:"Marina", progress:0, milestoneIcon:"flag"})
+    ];
+    var project = { id:genId(), name:"Exemplo — Lançamento do site institucional", startDate: toISO(start), businessDaysOnly:true, showResponsible:true, showPredecessors:true, showNotes:true, pinned:false, dueSoonEnabled:false, dueSoonDays:3, replanEnabled:false, barLabelMode:"percent", ganttScale:"weeks", ganttZoom:1, ganttLabelWidth:220, isExample:true, tasks:tasks };
+    return { projects:[project], activeId: project.id, sidebarCollapsed:false };
+  }
+
+  function normalizeProject(p){
+    p.name = p.name || "Projeto sem nome";
+    p.startDate = p.startDate || toISO(todayDate());
+    p.businessDaysOnly = p.businessDaysOnly !== false;
+    p.showResponsible = !!p.showResponsible;
+    p.showPredecessors = p.showPredecessors !== false;
+    p.showNotes = !!p.showNotes;
+    p.pinned = !!p.pinned;
+    p.dueSoonEnabled = !!p.dueSoonEnabled;
+    var dsd = Math.round(Number(p.dueSoonDays));
+    p.dueSoonDays = (!isNaN(dsd) && dsd >= 0) ? dsd : 3;
+    p.replanEnabled = !!p.replanEnabled;
+    p.isExample = !!p.isExample;
+    p.barLabelMode = (p.barLabelMode === "duration") ? "duration" : "percent";
+    p.ganttScale = ["days","weeks","months","both"].indexOf(p.ganttScale) !== -1 ? p.ganttScale : "weeks";
+    var gz = Number(p.ganttZoom);
+    p.ganttZoom = (!isNaN(gz) && gz >= 0.3 && gz <= 3) ? gz : 1;
+    var glw = Math.round(Number(p.ganttLabelWidth));
+    p.ganttLabelWidth = (!isNaN(glw) && glw >= 100 && glw <= 560) ? glw : 220;
+    p.tasks = (Array.isArray(p.tasks) ? p.tasks : []).map(function(t){
+      return {
+        id: t.id || genId(),
+        name: typeof t.name === "string" ? t.name : "",
+        duration: (typeof t.duration === "number" && !isNaN(t.duration)) ? Math.max(0, Math.round(t.duration)) : 0,
+        deps: Array.isArray(t.deps) ? t.deps.slice() : [],
+        parentId: t.parentId || null,
+        collapsed: !!t.collapsed,
+        color: t.color || null,
+        responsible: typeof t.responsible === "string" ? t.responsible : "",
+        notes: typeof t.notes === "string" ? t.notes : "",
+        progress: (typeof t.progress === "number" && !isNaN(t.progress)) ? Math.min(100, Math.max(0, Math.round(t.progress))) : 0,
+        milestoneIcon: (typeof t.milestoneIcon === "string") ? t.milestoneIcon : null,
+        startOverride: (typeof t.startOverride === "string" && t.startOverride) ? t.startOverride : null,
+        atRisk: !!t.atRisk,
+        baselineStart: (typeof t.baselineStart === "string" && t.baselineStart) ? t.baselineStart : null,
+        baselineEnd: (typeof t.baselineEnd === "string" && t.baselineEnd) ? t.baselineEnd : null,
+        lastSeenStart: (typeof t.lastSeenStart === "string" && t.lastSeenStart) ? t.lastSeenStart : null,
+        lastSeenEnd: (typeof t.lastSeenEnd === "string" && t.lastSeenEnd) ? t.lastSeenEnd : null,
+        replanCount: (typeof t.replanCount === "number" && !isNaN(t.replanCount) && t.replanCount >= 0) ? Math.round(t.replanCount) : 0
+      };
+    });
+    return p;
+  }
+  function normalizeState(s){
+    if(!s || !Array.isArray(s.projects)) return seedState();
+    s.projects = s.projects.map(normalizeProject);
+    if(!s.activeId || !s.projects.some(function(p){ return p.id === s.activeId; })){
+      s.activeId = s.projects.length ? s.projects[0].id : null;
+    }
+    s.sidebarCollapsed = !!s.sidebarCollapsed;
+    return s;
+  }
+
+  function loadState(){
+    try{
+      var raw = localStorage.getItem(STORAGE_KEY);
+      if(!raw) return seedState();
+      var parsed = JSON.parse(raw);
+      return normalizeState(parsed);
+    }catch(e){
+      console.warn("Easy Timeline: não foi possível ler o armazenamento local, iniciando com o exemplo.", e);
+      return seedState();
+    }
+  }
+
+  var state = loadState();
+  var saveOk = true;
+  function persist(){
+    try{ localStorage.setItem(STORAGE_KEY, JSON.stringify(state)); saveOk = true; }
+    catch(e){ saveOk = false; console.warn("Easy Timeline: falha ao salvar no armazenamento local.", e); }
+  }
+
+  function activeProject(){
+    return state.projects.filter(function(p){ return p.id === state.activeId; })[0] || null;
+  }
+
+  function saveAndRender(){ persist(); render(); }
+
+  function showToast(msg){
+    ui.toast = msg;
+    if(toastTimer) clearTimeout(toastTimer);
+    render();
+    toastTimer = setTimeout(function(){ ui.toast = null; render(); }, 2600);
+  }
+
+  // ---------------- downloads (Excel / PNG) ----------------
+  function doDownload(filename, blob){
+    if(!window.claude || !window.claude.use){
+      showToast("Exportação de arquivos não é suportada neste ambiente.");
+      return;
+    }
+    window.claude.use("downloads").then(function(downloads){
+      if(!downloads){ showToast("Exportação de arquivos não está disponível aqui."); return; }
+      return downloads.save({ filename:filename, data:blob }).then(function(res){
+        showToast(res.status === "saved" ? "Arquivo salvo." : "Arquivo enviado.");
+      });
+    }).catch(function(err){
+      var code = err && err.code;
+      var msg = "Não foi possível exportar o arquivo.";
+      if(code === "declined") msg = "Exportação cancelada.";
+      else if(code === "rejected_extension" || code === "extension_not_enabled") msg = "Esse formato não está disponível aqui.";
+      else if(code === "rate_limited") msg = "Aguarde um instante e tente exportar de novo.";
+      else if(code === "too_large") msg = "O arquivo ficou grande demais para exportar aqui.";
+      showToast(msg);
+    });
+  }
+
+  function exportExcel(){
+    var proj = activeProject();
+    if(!proj || !proj.tasks.length){ showToast("Adicione atividades antes de exportar."); return; }
+    if(typeof XLSX === "undefined"){ showToast("Biblioteca de exportação ainda carregando — tente novamente em instantes."); return; }
+    var full = computeFullSchedule(proj);
+    var rows = buildDisplayRows(proj);
+    var header = ["Código","Nível","Atividade"];
+    if(proj.showResponsible) header.push("Responsável");
+    header = header.concat(["Duração (dias)","Predecessoras","Início","Término","% Concluído","Em risco"]);
+    if(proj.showNotes) header.push("Observações");
+    var data = [header];
+    rows.forEach(function(r){
+      var idx = proj.tasks.findIndex(function(x){ return x.id === r.task.id; });
+      var code = taskLabel(idx);
+      var info = full.infoFor(r.task.id);
+      var indent = Array(r.depth+1).join("    ");
+      var depsTxt = (r.task.deps||[]).map(function(d){
+        var di = proj.tasks.findIndex(function(x){ return x.id === d; });
+        return di > -1 ? taskLabel(di) : null;
+      }).filter(Boolean).join(", ");
+      var row = [code, r.depth+1, indent + (r.task.name || "(sem nome)")];
+      if(proj.showResponsible) row.push(r.task.responsible || "");
+      row.push(info.isGroup ? "" : (r.task.duration || 0));
+      row.push(info.isGroup ? "" : depsTxt);
+      row.push(info.scheduled ? fmtFull(info.startDate) : "");
+      row.push(info.scheduled ? fmtFull(info.endDate) : "");
+      row.push(info.progress || 0);
+      row.push(r.task.atRisk ? "Sim" : "Não");
+      if(proj.showNotes) row.push(r.task.notes || "");
+      data.push(row);
+    });
+    var ws = XLSX.utils.aoa_to_sheet(data);
+    var widths = [{wch:7},{wch:6},{wch:38}];
+    if(proj.showResponsible) widths.push({wch:18});
+    widths = widths.concat([{wch:13},{wch:16},{wch:12},{wch:12},{wch:11},{wch:8}]);
+    if(proj.showNotes) widths.push({wch:40});
+    ws["!cols"] = widths;
+    var wb = XLSX.utils.book_new();
+    XLSX.utils.book_append_sheet(wb, ws, "Cronograma");
+    var out = XLSX.write(wb, { bookType:"xlsx", type:"array" });
+    var blob = new Blob([out], { type:"application/vnd.openxmlformats-officedocument.spreadsheetml.sheet" });
+    doDownload(slugify(proj.name)+".xlsx", blob);
+  }
+
+  function exportPng(){
+    var proj = activeProject();
+    if(!proj || !proj.tasks.length){ showToast("Adicione atividades antes de exportar."); return; }
+    var panel = root.querySelector(".gantt-panel");
+    if(!panel){ showToast("Nada para exportar ainda."); return; }
+    if(typeof html2canvas === "undefined"){ showToast("Biblioteca de exportação ainda carregando — tente novamente em instantes."); return; }
+    var bg = getComputedStyle(document.documentElement).getPropertyValue("--paper-raised").trim() || "#ffffff";
+    html2canvas(panel, {
+      backgroundColor: bg,
+      scale: 2,
+      onclone: function(clonedDoc){
+        var gs = clonedDoc.querySelector(".gantt-scroll");
+        if(gs){ gs.style.overflow = "visible"; gs.style.width = gs.scrollWidth + "px"; gs.style.maxHeight = "none"; }
+        var labels = clonedDoc.querySelector(".gantt-labels");
+        if(labels){ labels.style.position = "static"; }
+      }
+    }).then(function(canvas){
+      canvas.toBlob(function(blob){
+        if(!blob){ showToast("Não foi possível gerar a imagem."); return; }
+        doDownload(slugify(proj.name)+"-gantt.png", blob);
+      }, "image/png");
+    }).catch(function(err){
+      console.warn(err);
+      showToast("Não foi possível gerar a imagem.");
+    });
+  }
+
+  // ---------------- rendering ----------------
+  function render(){
+    var proj = activeProject();
+    root.classList.toggle("is-sidebar-collapsed", !!state.sidebarCollapsed);
+    root.innerHTML =
+      renderSidebar(proj) +
+      '<main class="main">' + (proj ? renderProject(proj) : renderEmpty()) + '</main>' +
+      (state.sidebarCollapsed ? '<button class="sidebar-expand-btn" type="button" data-action="toggle-sidebar" title="Mostrar barra lateral">☰</button>' : '') +
+      renderPopover(proj) +
+      renderRestoreModal() +
+      renderQuickAddModal() +
+      (ui.toast ? '<div class="toast">'+esc(ui.toast)+'</div>' : '');
+    if(ui.focusNextId){
+      var elF = root.querySelector('.name-input[data-task-id="'+ui.focusNextId+'"]');
+      if(elF){ elF.focus(); var len = elF.value.length; try{ elF.setSelectionRange(len,len); }catch(e){} }
+      ui.focusNextId = null;
+    }
+    if(ui.focusQuickAdd){
+      var elQ = document.getElementById("quickAddTextarea");
+      if(elQ){ elQ.focus(); }
+      ui.focusQuickAdd = false;
+    }
+    var selAllEl = document.getElementById("selectAllTasksCheckbox");
+    if(selAllEl && proj){
+      var rowsSA = buildDisplayRows(proj);
+      var fullSA = computeFullSchedule(proj);
+      var selectableSA = rowsSA.filter(function(r){ return !fullSA.isGroup(r.task.id); }).map(function(r){ return r.task.id; });
+      var selectedSA = selectableSA.filter(function(id){ return ui.bulkSelectedIds.has(id); }).length;
+      selAllEl.indeterminate = selectedSA > 0 && selectedSA < selectableSA.length;
+    }
+    // Group-row bulk-select checkboxes have no HTML attribute for the mixed/indeterminate
+    // state, so it must be computed and set imperatively after each render, per group.
+    var groupSelectEls = root.querySelectorAll('[data-action="toggle-select-group"]');
+    if(groupSelectEls.length && proj){
+      var childrenMapGS = buildChildrenMap(proj.tasks);
+      groupSelectEls.forEach(function(elGS){
+        var leafIdsGS = leafDescendants(elGS.getAttribute("data-id"), childrenMapGS);
+        var selectedGS = leafIdsGS.filter(function(id){ return ui.bulkSelectedIds.has(id); }).length;
+        elGS.checked = leafIdsGS.length > 0 && selectedGS === leafIdsGS.length;
+        elGS.indeterminate = selectedGS > 0 && selectedGS < leafIdsGS.length;
+      });
+    }
+    applyProjectFilter();
+  }
+
+  function applyProjectFilter(){
+    var q = (ui.projectSearch || "").trim().toLowerCase();
+    var items = root.querySelectorAll(".project-item");
+    var any = false;
+    items.forEach(function(el){
+      var name = el.getAttribute("data-name") || "";
+      var match = !q || name.indexOf(q) !== -1;
+      el.hidden = !match;
+      if(match) any = true;
+    });
+    var empty = root.querySelector(".project-search-empty");
+    if(empty) empty.hidden = !(q && !any);
+    root.querySelectorAll(".project-list-divider").forEach(function(d){ d.hidden = !!q; });
+  }
+
+  function renderEmpty(){
+    return '<div class="empty-state">Nenhum projeto selecionado.<br>Crie um projeto na barra lateral para começar.</div>';
+  }
+
+  function renderSidebar(proj){
+    var sorted = state.projects.slice().sort(function(a, b){
+      var ap = a.pinned ? 1 : 0, bp = b.pinned ? 1 : 0;
+      return bp - ap;
+    });
+    var firstUnpinnedIdx = -1;
+    for(var i = 0; i < sorted.length; i++){ if(!sorted[i].pinned){ firstUnpinnedIdx = i; break; } }
+
+    var items = sorted.map(function(p, idx){
+      var full = computeFullSchedule(p);
+      var active = p.id === state.activeId;
+      var pendingThis = ui.pendingDelete && ui.pendingDelete.kind === "project" && ui.pendingDelete.id === p.id;
+      var durTxt = p.tasks.length ? (full.core.projectDuration + (p.businessDaysOnly ? " dias úteis" : " dias")) : "vazio";
+      var overdue = p.tasks.length ? projectHasOverdueTask(p, full) : false;
+      var overdueFlag = overdue ? '<span class="project-overdue-flag" title="Este cronograma tem atividade(s) em atraso">!</span>' : '';
+      var divider = (idx === firstUnpinnedIdx && idx > 0) ? '<div class="project-list-divider"></div>' : '';
+      return divider + '' +
+        '<div class="project-item'+(active?' active':'')+'" data-action="select-project" data-id="'+p.id+'" data-name="'+esc(p.name.toLowerCase())+'">' +
+          '<div class="project-item-top">' +
+            '<span class="project-name-wrap"><span class="project-name">'+esc(p.name)+'</span>'+overdueFlag+'</span>' +
+            '<span class="project-item-actions">' +
+              '<button class="icon-btn pin-btn'+(p.pinned?' is-pinned':'')+'" type="button" data-action="toggle-pin-project" data-id="'+p.id+'" title="'+(p.pinned?'Desafixar dos favoritos':'Fixar no topo')+'">'+(p.pinned?'★':'☆')+'</button>' +
+              '<button class="icon-btn" type="button" data-action="delete-project" data-id="'+p.id+'" title="Excluir projeto">'+(pendingThis ? '<span class="mono" style="color:var(--rust); font-size:.65rem;">confirmar</span>' : '✕')+'</button>' +
+            '</span>' +
+          '</div>' +
+          '<span class="project-meta">'+p.tasks.length+' atividade'+(p.tasks.length===1?'':'s')+' · '+durTxt+'</span>' +
+          (p.isExample ? '<span class="example-tag">exemplo</span>' : '') +
+        '</div>';
+    }).join("");
+
+    return '' +
+      '<aside class="sidebar">' +
+        '<div>' +
+          '<div class="sidebar-top-row">' +
+            '<div class="brand"><span class="display brand-mark">Easy Timeline</span><span class="brand-sub mono">cronogramas</span></div>' +
+            '<button class="sidebar-collapse-btn" type="button" data-action="toggle-sidebar" title="Ocultar barra lateral">‹</button>' +
+          '</div>' +
+          '<div class="ruler"></div>' +
+        '</div>' +
+        '<button class="btn btn-primary btn-block" type="button" data-action="new-project">+ Novo projeto</button>' +
+        (state.projects.length > 1 ? '<input type="text" id="projectSearchInput" class="sidebar-search" placeholder="Buscar projeto..." value="'+esc(ui.projectSearch)+'">' : '') +
+        '<div class="project-list">'+(items || '<div class="storage-note">Nenhum projeto ainda.</div>')+'</div>' +
+        '<p class="storage-note project-search-empty" hidden>Nenhum projeto encontrado.</p>' +
+        '<div class="sidebar-foot">' +
+          '<button class="btn btn-sm" type="button" data-action="copy-backup">⧉ Copiar backup</button>' +
+          '<button class="btn btn-sm" type="button" data-action="open-restore">↺ Restaurar backup</button>' +
+          '<p class="storage-note">Os dados ficam salvos apenas neste navegador' + (saveOk ? '' : ' — <span style="color:var(--rust)">o salvamento automático falhou</span>') + '. Use o backup para levar seus cronogramas a outro navegador ou dispositivo.</p>' +
+        '</div>' +
+      '</aside>';
+  }
+
+  function renderProject(p){
+    var full = computeFullSchedule(p);
+    if(reconcileReplan(p, full)) persist();
+    var rows = buildDisplayRows(p);
+    var existingTaskIds = new Set(p.tasks.map(function(t){ return t.id; }));
+    Array.from(ui.bulkSelectedIds).forEach(function(id){ if(!existingTaskIds.has(id)) ui.bulkSelectedIds.delete(id); });
+    var bulkSelectableIds = rows.filter(function(r){ return !full.isGroup(r.task.id); }).map(function(r){ return r.task.id; });
+    var bulkSelectedCount = bulkSelectableIds.filter(function(id){ return ui.bulkSelectedIds.has(id); }).length;
+    var html = '';
+    html += '<div class="project-header">';
+    html += '  <input class="title-input display" type="text" value="'+esc(p.name)+'" data-field="name" data-scope="project" placeholder="Nome do projeto">';
+    html += '  <div class="meta-row">';
+    html += '    <div class="field"><label for="startDateText">Início</label>' +
+      '<div class="date-field">' +
+        '<input id="startDateText" type="text" class="date-input date-text-input" inputmode="numeric" placeholder="dd/mm/aaaa" value="'+esc(fmtDateBR(p.startDate))+'" data-date-text="1" data-scope="project" title="Digite ou cole a data (dd/mm/aaaa)">' +
+        '<input id="startDate" type="date" class="date-input date-native-input" value="'+esc(p.startDate)+'" data-field="startDate" data-scope="project" title="Escolher no calendário">' +
+      '</div>' +
+    '</div>';
+    html += '    <label class="toggle" title="Ao calcular datas de início e término, pula sábados e domingos."><input type="checkbox" '+(p.businessDaysOnly?'checked':'')+' data-field="businessDaysOnly" data-scope="project"><span class="toggle-track"><span class="toggle-thumb"></span></span><span class="toggle-label">Somente dias úteis</span></label>';
+    html += '    <label class="toggle" title="Exibe ou oculta a coluna de responsável na tabela de atividades."><input type="checkbox" '+(p.showResponsible?'checked':'')+' data-field="showResponsible" data-scope="project"><span class="toggle-track"><span class="toggle-thumb"></span></span><span class="toggle-label">Mostrar responsável</span></label>';
+    html += '    <label class="toggle" title="Exibe ou oculta a coluna de predecessoras (dependências entre atividades) na tabela."><input type="checkbox" '+(p.showPredecessors?'checked':'')+' data-field="showPredecessors" data-scope="project"><span class="toggle-track"><span class="toggle-thumb"></span></span><span class="toggle-label">Mostrar predecessoras</span></label>';
+    html += '    <label class="toggle" title="Exibe ou oculta a coluna de observações na tabela de atividades."><input type="checkbox" '+(p.showNotes?'checked':'')+' data-field="showNotes" data-scope="project"><span class="toggle-track"><span class="toggle-thumb"></span></span><span class="toggle-label">Mostrar observações</span></label>';
+    html += '    <label class="toggle" title="Destaca em vermelho as atividades já vencidas e em amarelo as que estão perto do prazo (defina a antecedência ao lado)."><input type="checkbox" '+(p.dueSoonEnabled?'checked':'')+' data-field="dueSoonEnabled" data-scope="project"><span class="toggle-track"><span class="toggle-thumb"></span></span><span class="toggle-label">Sinalizar prazos</span></label>';
+    if(p.dueSoonEnabled){
+      html += '    <div class="field" title="Quantos dias antes do término uma atividade passa a ser sinalizada como \'prazo próximo\'."><label for="dueSoonDays">Avisar com</label><input id="dueSoonDays" type="number" min="0" max="90" step="1" value="'+p.dueSoonDays+'" data-field="dueSoonDays" data-scope="project" style="width:48px;"><label for="dueSoonDays">dia(s) de antecedência</label></div>';
+    }
+    html += '    <label class="toggle" title="Guarda a data original de cada atividade como referência. Se a data calculada mudar depois (por exemplo, por atraso de uma predecessora), a atividade recebe um selo ↻ indicando quantas vezes já foi replanejada."><input type="checkbox" '+(p.replanEnabled?'checked':'')+' data-field="replanEnabled" data-scope="project"><span class="toggle-track"><span class="toggle-thumb"></span></span><span class="toggle-label">Sinalizar replanejamento</span></label>';
+    if(p.tasks.length){
+      html += '    <span class="summary-pill">Duração: <b>'+full.core.projectDuration+(p.businessDaysOnly?' dias úteis':' dias')+'</b> · Término: <b>'+fmtFull(full.core.projectEndDate)+'</b></span>';
+    }
+    html += '  </div>';
+    html += '</div>';
+
+    if(full.core.unscheduledIds.length){
+      var names = full.core.unscheduledIds.map(function(id){
+        var idx = p.tasks.findIndex(function(t){ return t.id === id; });
+        return taskLabel(idx) + ' "' + (p.tasks[idx] ? (p.tasks[idx].name || "(sem nome)") : "") + '"';
+      }).join(", ");
+      html += '<div class="banner">⚠<div><strong>Dependência circular detectada</strong>As atividades a seguir não puderam ser agendadas porque suas predecessoras formam um ciclo: '+esc(names)+'. Ajuste as predecessoras para corrigir.</div></div>';
+    }
+
+    html += '<div class="toolbar">' +
+      '<div class="toolbar-left">' +
+        '<button class="btn btn-primary" type="button" data-action="add-task" title="Adiciona logo abaixo da linha selecionada, no mesmo nível">+ Adicionar atividade</button>' +
+        '<button class="btn btn-sm" type="button" data-action="open-quickadd" title="Cole ou digite vários nomes de atividade de uma vez, uma por linha">☰ Adicionar em lista</button>' +
+        (bulkSelectedCount > 0 ? (
+          '<span class="bulk-bar">' +
+            '<span class="bulk-count">'+bulkSelectedCount+' selecionada'+(bulkSelectedCount===1?'':'s')+'</span>' +
+            '<button class="btn btn-sm btn-primary" type="button" data-action="bulk-complete" title="Marcar as atividades selecionadas como 100% concluídas">✓ Concluir (100%)</button>' +
+            '<button class="btn btn-sm btn-ghost" type="button" data-action="clear-selection" title="Limpar seleção">Limpar</button>' +
+          '</span>'
+        ) : '') +
+      '</div>' +
+      '<div class="toolbar-right">' +
+        '<button class="btn btn-sm" type="button" data-action="export-excel" title="Exportar tabela para Excel">⇩ Excel</button>' +
+        '<button class="btn btn-sm" type="button" data-action="export-png" title="Exportar gráfico de Gantt como imagem">⇩ PNG</button>' +
+      '</div>' +
+    '</div>';
+
+    html += renderTable(p, full, rows);
+    html += renderGantt(p, full, rows);
+
+    return html;
+  }
+
+  function renderTable(p, full, rows){
+    if(!p.tasks.length){
+      return '<div class="table-wrap"><div class="empty-state">Nenhuma atividade ainda. Clique em "Adicionar atividade" para começar.</div></div>';
+    }
+    var trs = rows.map(function(row, rowIdx){
+      var t = row.task, depth = row.depth;
+      var idx = p.tasks.findIndex(function(x){ return x.id === t.id; });
+      var info = full.infoFor(t.id);
+      var isGroup = info.isGroup;
+      var rowClass = !info.scheduled ? 'is-unscheduled' : (t.atRisk ? 'is-at-risk' : '');
+      if(isGroup) rowClass += ' is-group-row';
+      if(t.id === ui.selectedTaskId) rowClass += ' is-selected';
+
+      var bulkCheckbox = !isGroup
+        ? '<input type="checkbox" class="row-select-checkbox" data-action="toggle-select-task" data-id="'+t.id+'" '+(ui.bulkSelectedIds.has(t.id)?'checked':'')+' title="Selecionar para concluir em lote">'
+        : '<input type="checkbox" class="row-select-checkbox" data-action="toggle-select-group" data-id="'+t.id+'" title="Selecionar todas as subatividades para concluir em lote">';
+
+      var chevron = isGroup
+        ? '<button class="tree-toggle" type="button" data-action="toggle-collapse" data-id="'+t.id+'" title="'+(t.collapsed?'Expandir':'Recolher')+'">'+(t.collapsed?'▸':'▾')+'</button>'
+        : '<span class="tree-spacer"></span>';
+      var colorHex = effectiveColorHex(t, full.tasksById);
+      var colorDot = '<button class="color-dot'+(colorHex?' has-color':'')+(t.color?' is-own':'')+'" type="button" data-action="open-color-menu" data-task-id="'+t.id+'" title="Definir cor" style="'+(colorHex?('background:'+colorHex+';border-color:'+colorHex+';'):'')+'"></button>';
+
+      var chips = (t.deps||[]).map(function(depId){
+        var depIdx = p.tasks.findIndex(function(x){ return x.id === depId; });
+        if(depIdx === -1) return '';
+        return '<span class="chip">'+taskLabel(depIdx)+'<button type="button" data-action="remove-dep" data-task-id="'+t.id+'" data-dep-id="'+depId+'" title="Remover dependência">×</button></span>';
+      }).join("");
+
+      var canEditDates = !isGroup;
+      var progress = info.progress || 0;
+
+      var dueDotCls = null, dueDotTitle = "";
+      if(p.dueSoonEnabled && info.scheduled && progress < 100){
+        var todayD = todayDate();
+        var endD = new Date(info.endDate); endD.setHours(0,0,0,0);
+        var diffDays = Math.round((endD - todayD) / 86400000);
+        if(diffDays < 0){
+          dueDotCls = "overdue";
+          dueDotTitle = "Atrasada — venceu há " + Math.abs(diffDays) + " dia(s)";
+        } else if(diffDays <= (p.dueSoonDays||0)){
+          dueDotCls = "soon";
+          dueDotTitle = diffDays === 0 ? "Vence hoje" : ("Vence em " + diffDays + " dia(s)");
+        }
+      }
+      var dueFlag = dueDotCls
+        ? ('<span class="due-flag due-flag-'+dueDotCls+'" title="'+esc(dueDotTitle)+'">'+(dueDotCls==='overdue'?'!':'')+'</span>')
+        : '';
+      var endDateCls = dueDotCls === 'overdue' ? ' is-overdue' : '';
+
+      var replanBadge = "";
+      if(p.replanEnabled && t.replanCount > 0){
+        var replanTitle = "Replanejada "+t.replanCount+"x — original: "+
+          (t.baselineStart ? fmtFull(parseISO(t.baselineStart)) : "?")+" a "+(t.baselineEnd ? fmtFull(parseISO(t.baselineEnd)) : "?")+
+          ", atual: "+(info.scheduled ? fmtFull(info.startDate) : "?")+" a "+(info.scheduled ? fmtFull(info.endDate) : "?");
+        replanBadge = '<span class="replan-badge" title="'+esc(replanTitle)+'">↻'+t.replanCount+'</span>';
+      }
+
+      var startCell, endCell;
+      if(canEditDates){
+        var startVal = info.scheduled ? toISO(info.startDate) : (t.startOverride || "");
+        startCell = '<div class="date-edit">' +
+            '<div class="date-field">' +
+              '<input type="text" class="date-input date-text-input" inputmode="numeric" placeholder="dd/mm/aaaa" value="'+esc(fmtDateBR(startVal))+'" data-date-text="1" data-task-id="'+t.id+'" data-for-field="startOverride" title="Digite ou cole a data (dd/mm/aaaa)">' +
+              '<input type="date" class="date-input date-native-input" value="'+esc(startVal)+'" data-field="startOverride" data-task-id="'+t.id+'" title="Escolher no calendário">' +
+            '</div>' +
+            (t.startOverride ? '<button class="date-clear-btn" type="button" data-action="clear-start-override" data-id="'+t.id+'" title="Voltar a calcular automaticamente">↺</button>' : '') +
+          '</div>';
+        if(t.duration === 0){
+          endCell = info.scheduled
+            ? ('<div class="date-flag-wrap"><span class="date-text'+endDateCls+'">'+fmtShort(info.endDate)+'</span>'+dueFlag+'</div>')
+            : '<span class="dash">—</span>';
+        } else {
+          var endVal = info.scheduled ? toISO(info.endDate) : "";
+          endCell = '<div class="date-flag-wrap">' +
+              '<div class="date-field">' +
+                '<input type="text" class="date-input date-text-input'+endDateCls+'" inputmode="numeric" placeholder="dd/mm/aaaa" value="'+esc(fmtDateBR(endVal))+'" data-date-text="1" data-task-id="'+t.id+'" data-for-field="endDateManual" title="Digite ou cole a data (dd/mm/aaaa) — ajusta a duração">' +
+                '<input type="date" class="date-input date-native-input'+endDateCls+'" value="'+esc(endVal)+'" data-field="endDateManual" data-task-id="'+t.id+'" title="Escolher no calendário">' +
+              '</div>' +
+              dueFlag +
+            '</div>';
+        }
+      } else {
+        startCell = info.scheduled ? fmtShort(info.startDate) : '<span class="dash">—</span>';
+        endCell = info.scheduled
+          ? ('<div class="date-flag-wrap"><span class="date-text'+endDateCls+'">'+fmtShort(info.endDate)+'</span>'+dueFlag+'</div>')
+          : '<span class="dash">—</span>';
+      }
+
+      var durCell;
+      if(isGroup){
+        durCell = '<span class="dur-readout mono">'+(info.scheduled ? (info.duration+' d') : '—')+'</span>';
+      } else if(t.duration === 0){
+        var mIcon = t.milestoneIcon || "diamond";
+        var mPaint = resolveMilestonePaint(colorHex, true);
+        durCell = '<div class="milestone-cell">' +
+          '<button class="milestone-icon-btn" type="button" data-action="open-milestone-menu" data-task-id="'+t.id+'" title="Ícone do marco"><svg width="18" height="18" viewBox="0 0 18 18">'+milestoneShapeSvg(mIcon,9,9,6,mPaint)+'</svg></button>' +
+          '<button class="row-icon-btn" type="button" data-action="unset-milestone" data-id="'+t.id+'" title="Transformar em atividade normal">↩</button>' +
+        '</div>';
+      } else {
+        durCell = '<div class="dur-cell"><input class="dur-input" type="number" min="0" step="1" value="'+t.duration+'" data-field="duration" data-task-id="'+t.id+'"><span class="dur-unit">d</span>' +
+          '<span class="stepper">' +
+            '<button class="stepper-btn" type="button" data-action="dur-step" data-dir="up" data-id="'+t.id+'" title="Aumentar 1 dia">▲</button>' +
+            '<button class="stepper-btn" type="button" data-action="dur-step" data-dir="down" data-id="'+t.id+'" title="Diminuir 1 dia">▼</button>' +
+          '</span>' +
+          '<button class="milestone-toggle-btn" type="button" data-action="set-milestone" data-id="'+t.id+'" title="Marcar como marco">◆</button></div>';
+      }
+
+      var depsCell = isGroup
+        ? '<span class="dash-muted" title="Atividade agrupadora — segue a sequência das subatividades">—</span>'
+        : ('<div class="deps-cell">'+chips+'<button class="add-dep-btn" type="button" data-action="add-dep" data-task-id="'+t.id+'" title="Adicionar predecessora">+</button></div>');
+
+      var isDone = progress >= 100;
+      var pctColor = isDone ? "var(--sage)" : (colorHex || "var(--blue)");
+      var progressBar = '<span class="progress-track"><span class="progress-fill-el" style="width:'+progress+'%; background:'+pctColor+';"></span></span>';
+      var progressCell;
+      if(isGroup){
+        progressCell = '<div class="progress-cell"><span class="mono'+(isDone?' pct-done':'')+'" style="font-size:.8rem;">'+progress+'%</span>'+progressBar+'</div>';
+      } else if(t.duration === 0){
+        progressCell = '<label class="progress-check'+(isDone?' pct-done':'')+'"><input type="checkbox" '+(isDone?'checked':'')+' data-field="milestoneDone" data-task-id="'+t.id+'"> Concluído</label>';
+      } else {
+        progressCell = '<div class="progress-cell"><input class="progress-input'+(isDone?' pct-done':'')+'" type="number" min="0" max="100" step="5" value="'+progress+'" data-field="progress" data-task-id="'+t.id+'"><span class="pct-unit'+(isDone?' pct-done':'')+'">%</span>'+progressBar+'</div>';
+      }
+
+      var responsibleCell = p.showResponsible
+        ? '<td><input class="responsible-input" type="text" value="'+esc(t.responsible)+'" data-field="responsible" data-task-id="'+t.id+'" placeholder="—"></td>'
+        : '';
+      var notesCell = p.showNotes
+        ? '<td><input class="notes-input" type="text" value="'+esc(t.notes)+'" data-field="notes" data-task-id="'+t.id+'" placeholder="—" title="'+esc(t.notes)+'"></td>'
+        : '';
+
+      var canOutdent = !!t.parentId;
+      var canIndent = hasPrevSibling(rows, rowIdx);
+      var canUp = hasPrevSibling(rows, rowIdx);
+      var canDown = hasNextSibling(rows, rowIdx);
+      var leftBtns = '' +
+        (canOutdent ? '<button class="row-icon-btn" type="button" data-action="outdent-task" data-id="'+t.id+'" title="Recuar para fora (sair deste nível)">⇤</button>' : '<span class="row-icon-spacer"></span>') +
+        (canIndent ? '<button class="row-icon-btn" type="button" data-action="indent-task" data-id="'+t.id+'" title="Recuar para dentro (agrupar sob a atividade acima)">⇥</button>' : '<span class="row-icon-spacer"></span>') +
+        (canUp ? '<button class="row-icon-btn" type="button" data-action="move-up" data-id="'+t.id+'" title="Mover para cima">↑</button>' : '<span class="row-icon-spacer"></span>') +
+        (canDown ? '<button class="row-icon-btn" type="button" data-action="move-down" data-id="'+t.id+'" title="Mover para baixo">↓</button>' : '<span class="row-icon-spacer"></span>') +
+        '<button class="row-icon-btn" type="button" data-action="add-subtask" data-id="'+t.id+'" title="Adicionar subatividade">+˅</button>' +
+        '<button class="row-icon-btn'+(t.atRisk?' active-risk':'')+'" type="button" data-action="toggle-at-risk" data-id="'+t.id+'" title="'+(t.atRisk?'Remover marcação de risco':'Marcar como em risco')+'">⚠</button>' +
+        (replanBadge ? '<button class="row-icon-btn" type="button" data-action="accept-baseline" data-id="'+t.id+'" title="Aceitar a data atual como nova referência (zera o replanejamento)">✓</button>' : '');
+      var actions = '<div class="row-actions">' +
+        '<div class="row-actions-left">'+leftBtns+'</div>' +
+        '<button class="row-icon-btn danger" type="button" data-action="delete-task" data-id="'+t.id+'" title="Excluir atividade">'+(ui.pendingDelete && ui.pendingDelete.kind==='task' && ui.pendingDelete.id===t.id ? '<span class="mono" style="color:var(--rust); font-size:.68rem;">confirmar</span>' : '✕')+'</button>' +
+      '</div>';
+
+      var depsTd = p.showPredecessors ? ('<td>'+depsCell+'</td>') : '';
+
+      return '' +
+        '<tr class="'+rowClass.trim()+'" data-row-id="'+t.id+'">' +
+          '<td class="code-cell"><span class="code-cell-inner">'+bulkCheckbox+(t.atRisk ? '<span class="risk-dot" title="Em risco"></span>' : '')+replanBadge+taskLabel(idx)+'</span></td>' +
+          '<td><div class="name-cell" style="padding-left:'+(depth*18)+'px;">'+chevron+colorDot+'<input class="name-input" type="text" value="'+esc(t.name)+'" data-field="name" data-task-id="'+t.id+'" placeholder="Nome da atividade"></div></td>' +
+          responsibleCell +
+          '<td>'+durCell+'</td>' +
+          depsTd +
+          '<td class="date-cell">'+startCell+'</td>' +
+          '<td class="date-cell">'+endCell+'</td>' +
+          '<td>'+progressCell+'</td>' +
+          notesCell +
+          '<td>'+actions+'</td>' +
+        '</tr>';
+    }).join("");
+
+    var respTh = p.showResponsible ? '<th>Responsável</th>' : '';
+    var respCol = p.showResponsible ? '<col style="width:96px">' : '';
+    var depsTh = p.showPredecessors ? '<th>Predecessoras</th>' : '';
+    var depsCol = p.showPredecessors ? '<col style="width:136px">' : '';
+    var notesTh = p.showNotes ? '<th>Observações</th>' : '';
+    var notesCol = p.showNotes ? '<col style="width:150px">' : '';
+    var colgroup = '<colgroup><col style="width:56px"><col style="width:24%">'+respCol+'<col style="width:114px">'+depsCol+'<col style="width:114px"><col style="width:114px"><col style="width:120px">'+notesCol+'<col style="width:150px"></colgroup>';
+    var selectableIds = rows.filter(function(r){ return !full.isGroup(r.task.id); }).map(function(r){ return r.task.id; });
+    var selectedCount = selectableIds.filter(function(id){ return ui.bulkSelectedIds.has(id); }).length;
+    var selectAllChecked = selectableIds.length > 0 && selectedCount === selectableIds.length;
+    var selectAllTh = '<th><label class="select-all-label" title="Selecionar ou limpar todas as atividades visíveis"><input type="checkbox" id="selectAllTasksCheckbox" data-action="toggle-select-all-tasks" '+(selectAllChecked?'checked':'')+'><span>#</span></label></th>';
+    return '' +
+      '<div class="table-wrap"><table class="task-table">'+colgroup+'<thead><tr>' +
+        selectAllTh+'<th>Atividade</th>'+respTh+'<th>Duração</th>'+depsTh+'<th>Início</th><th>Término</th><th>% Concluído</th>'+notesTh+'<th></th>' +
+      '</tr></thead><tbody>'+trs+'</tbody></table></div>' +
+      '<p class="table-caption">Início e término são calculados automaticamente a partir da duração e das predecessoras — ou edite as datas diretamente (a duração e as atividades seguintes se ajustam sozinhas). Clique na bolinha para escolher uma cor, e em "◆" para marcar uma atividade como marco (escolha o ícone depois). Use "+˅" para criar uma subatividade (a atividade "mãe" passa a somar as datas das subatividades automaticamente) e ⇤ ⇥ ↑ ↓ para reorganizar a hierarquia e a ordem. Clique numa linha para selecioná-la — "Adicionar atividade" insere a nova logo abaixo dela.</p>';
+  }
+
+  function renderPopover(p){
+    if(!ui.popover || !p) return '';
+    var owner = p.tasks.filter(function(t){ return t.id === ui.popover.taskId; })[0];
+    if(!owner) return '';
+    var pos = ui.popover.pos || {top:80,left:80};
+    if(ui.popover.type === "color"){
+      var opts = '<button class="color-swatch-btn'+(!owner.color?' selected':'')+'" type="button" data-action="set-color" data-task-id="'+owner.id+'" data-color="" title="Automático"><span class="color-swatch-auto"></span></button>' +
+        SWATCHES.map(function(s){
+          return '<button class="color-swatch-btn'+(owner.color===s.key?' selected':'')+'" type="button" data-action="set-color" data-task-id="'+owner.id+'" data-color="'+s.key+'" title="'+s.label+'"><span class="color-swatch-dot" style="background:'+s.hex+';"></span></button>';
+        }).join("");
+      return '<div class="dep-menu" style="top:'+pos.top+'px; left:'+pos.left+'px;"><div class="dep-menu-title">Cor da atividade</div><div class="color-menu-grid">'+opts+'</div></div>';
+    }
+    if(ui.popover.type === "milestoneIcon"){
+      var curIcon = owner.milestoneIcon || "diamond";
+      var items2 = MILESTONE_ICONS.map(function(ic){
+        var paint = resolveMilestonePaint(owner.color ? swatchHex(owner.color) : null, true);
+        return '<button class="milestone-menu-item'+(curIcon===ic.key?' selected':'')+'" type="button" data-action="set-milestone-icon" data-task-id="'+owner.id+'" data-icon="'+ic.key+'">' +
+          '<svg class="milestone-menu-preview" viewBox="0 0 20 20">'+milestoneShapeSvg(ic.key,10,10,7,paint)+'</svg>' +
+          '<span>'+ic.label+'</span>' +
+        '</button>';
+      }).join("");
+      return '<div class="dep-menu" style="top:'+pos.top+'px; left:'+pos.left+'px; width:190px;"><div class="dep-menu-title">Ícone do marco</div><div class="dep-menu-list">'+items2+'</div></div>';
+    }
+    // dep menu
+    var full = computeFullSchedule(p);
+    var childrenMapTmp = buildChildrenMap(p.tasks);
+    var descendants = new Set(full.isGroup(owner.id) ? allDescendantIds(owner.id, childrenMapTmp) : []);
+    var candidates = p.tasks.filter(function(t){ return t.id !== owner.id && !descendants.has(t.id); });
+    function depItemHtml(t){
+      var idx = p.tasks.findIndex(function(x){ return x.id === t.id; });
+      var checked = (owner.deps||[]).indexOf(t.id) !== -1;
+      var grp = full.isGroup(t.id) ? ' <span class="grp-tag">· agrupadora</span>' : '';
+      return '<label class="dep-menu-item"><input type="checkbox" '+(checked?'checked':'')+' data-action="toggle-dep" data-task-id="'+owner.id+'" data-dep-id="'+t.id+'"><span class="code-cell">'+taskLabel(idx)+'</span><span style="overflow:hidden;text-overflow:ellipsis;white-space:nowrap;">'+esc(t.name||'(sem nome)')+'</span>'+grp+'</label>';
+    }
+    // The task immediately above owner in the displayed hierarchy is usually its
+    // predecessor, so it's pinned to the top of the list (separated by a divider);
+    // the rest keep the normal ascending order.
+    var displayRows = buildDisplayRows(p);
+    var ownerRowIdx = displayRows.findIndex(function(r){ return r.task.id === owner.id; });
+    var prevRowId = ownerRowIdx > 0 ? displayRows[ownerRowIdx-1].task.id : null;
+    var prevTask = prevRowId ? candidates.filter(function(t){ return t.id === prevRowId; })[0] : null;
+    var restCandidates = prevTask ? candidates.filter(function(t){ return t.id !== prevTask.id; }) : candidates;
+    var items = (prevTask ? (depItemHtml(prevTask) + '<div class="dep-menu-divider"></div>') : '') +
+      restCandidates.map(depItemHtml).join("");
+    var ownerIdx = p.tasks.findIndex(function(t){ return t.id === owner.id; });
+    return '' +
+      '<div class="dep-menu" style="top:'+pos.top+'px; left:'+pos.left+'px;">' +
+        '<div class="dep-menu-title">Predecessoras de '+taskLabel(ownerIdx)+'</div>' +
+        '<div class="dep-menu-list">'+(items || '<div class="dep-menu-empty">Nenhuma outra atividade neste projeto.</div>')+'</div>' +
+        '<div class="dep-menu-foot"><button class="btn btn-sm" type="button" data-action="close-popover">Concluído</button></div>' +
+      '</div>';
+  }
+
+  function renderRestoreModal(){
+    if(!ui.showRestore) return '';
+    return '' +
+      '<div class="modal-overlay" data-action="overlay-restore">' +
+        '<div class="modal" data-action="noop">' +
+          '<h2 class="display">Restaurar backup</h2>' +
+          '<p>Cole abaixo o texto JSON copiado anteriormente com "Copiar backup". Isso substitui todos os projetos salvos neste navegador.</p>' +
+          '<textarea id="restoreTextarea" spellcheck="false">'+esc(ui.restoreText)+'</textarea>' +
+          (ui.restoreError ? '<div class="modal-error">'+esc(ui.restoreError)+'</div>' : '') +
+          '<div class="modal-actions">' +
+            '<button class="btn" type="button" data-action="close-restore">Cancelar</button>' +
+            '<button class="btn btn-primary" type="button" data-action="apply-restore">Aplicar</button>' +
+          '</div>' +
+        '</div>' +
+      '</div>';
+  }
+
+  function renderQuickAddModal(){
+    if(!ui.showQuickAdd) return '';
+    return '' +
+      '<div class="modal-overlay" data-action="overlay-quickadd">' +
+        '<div class="modal" data-action="noop">' +
+          '<h2 class="display">Adicionar em lista</h2>' +
+          '<p>Digite ou cole um nome de atividade por linha. Recue uma linha com Tab (ou dois espaços) para deixá-la como subatividade da linha anterior menos recuada. As atividades entram no fim da lista — duração, predecessoras e datas você ajusta depois.</p>' +
+          '<textarea id="quickAddTextarea" spellcheck="false" placeholder="Levantamento de requisitos\nWireframes\n\tRevisão com cliente\nDesign visual">'+esc(ui.quickAddText)+'</textarea>' +
+          (ui.quickAddError ? '<div class="modal-error">'+esc(ui.quickAddError)+'</div>' : '') +
+          '<div class="modal-actions">' +
+            '<button class="btn" type="button" data-action="close-quickadd">Cancelar</button>' +
+            '<button class="btn btn-primary" type="button" data-action="apply-quickadd">Adicionar</button>' +
+          '</div>' +
+        '</div>' +
+      '</div>';
+  }
+
+  // ---------------- Gantt (SVG) ----------------
+  function scaleConfig(mode){
+    if(mode === "days") return { showDay:true, showWeek:false, showMonth:false, headerRows:1 };
+    if(mode === "months") return { showDay:false, showWeek:false, showMonth:true, headerRows:1 };
+    if(mode === "both") return { showDay:false, showWeek:true, showMonth:true, headerRows:2 };
+    return { showDay:false, showWeek:true, showMonth:false, headerRows:1 };
+  }
+  // The "natural" day width before the zoom control scales it — denser projects start more
+  // zoomed out so a first render is usually already readable without the user reaching for
+  // the zoom controls at all.
+  function basePxPerDayFor(totalDays){
+    return totalDays > 50 ? 16 : (totalDays > 28 ? 22 : (totalDays > 14 ? 28 : 38));
+  }
+
+  function renderGantt(p, full, rows){
+    if(!p.tasks.length) return '';
+    var visRows = rows.filter(function(r){ return full.infoFor(r.task.id).scheduled; });
+    if(!visRows.length){
+      return '<div class="gantt-panel"><p class="table-caption" style="padding:0;">Corrija a dependência circular acima para ver o gráfico de Gantt.</p></div>';
+    }
+    var rowIndexById = new Map();
+    visRows.forEach(function(r,i){ rowIndexById.set(r.task.id, i); });
+    function resolveVisibleId(id){
+      var cur = id, guard = 0;
+      while(cur && !rowIndexById.has(cur) && guard < 60){
+        var t = full.tasksById.get(cur);
+        cur = t ? t.parentId : null;
+        guard++;
+      }
+      return rowIndexById.has(cur) ? cur : null;
+    }
+
+    var cfg = scaleConfig(p.ganttScale);
+    var domainStart = full.core.projectStartDate;
+    var domainEnd = full.core.projectEndDate;
+    var totalDays = Math.max(daysBetween(domainStart, domainEnd) + 1, 1);
+    var ganttZoom = p.ganttZoom || 1;
+    var pxPerDay = Math.max(4, Math.round(basePxPerDayFor(totalDays) * ganttZoom));
+    var labelWidth = p.ganttLabelWidth || 220;
+    // When there are two header rows (month + week), reserve an extra top strip so the
+    // "HOJE" (today) flag never collides with the month label — both can start near x=0.
+    var headerExtra = cfg.headerRows === 2 ? 14 : 0;
+    var ROW_H = 34, HEADER_H = (cfg.headerRows === 2 ? 50 : 36) + headerExtra, PAD = 10;
+    var chartW = totalDays * pxPerDay + PAD * 2 + 170;
+    var chartH = HEADER_H + visRows.length * ROW_H + PAD;
+    var dayLabelStep = pxPerDay >= 30 ? 1 : (pxPerDay >= 18 ? 2 : 4);
+
+    var svg = '';
+    svg += '<svg width="'+chartW+'" height="'+chartH+'" viewBox="0 0 '+chartW+' '+chartH+'" role="img" aria-label="Gráfico de Gantt do projeto">';
+    svg += '<defs>' +
+      '<pattern id="hatch-critical-lines" patternUnits="userSpaceOnUse" width="6" height="6" patternTransform="rotate(45)">' +
+        '<line x1="0" y1="0" x2="0" y2="6" class="hatch-line"></line>' +
+      '</pattern>' +
+      '<marker id="arrow" viewBox="0 0 8 8" refX="7" refY="4" markerWidth="7" markerHeight="7" orient="auto-start-reverse">' +
+        '<path d="M0,0 L8,4 L0,8 z" class="arrow-head"></path>' +
+      '</marker>' +
+    '</defs>';
+
+    var monthLabelY = cfg.headerRows === 2 ? (16 + headerExtra) : (HEADER_H - 7), weekLabelY = cfg.headerRows === 2 ? (34 + headerExtra) : (HEADER_H - 7), dayLabelY = HEADER_H - 7;
+    for(var i = 0; i < totalDays; i++){
+      var d = addDays(domainStart, i);
+      var x = PAD + i * pxPerDay;
+      if(isWeekend(d)){
+        svg += '<rect x="'+x+'" y="'+HEADER_H+'" width="'+pxPerDay+'" height="'+(chartH-HEADER_H)+'" class="weekend-rect"></rect>';
+      }
+      var isMonthStart = d.getDate() === 1;
+      var isWeekStart = d.getDay() === 1;
+      var lineClass = "grid-line";
+      if(cfg.showMonth && isMonthStart) lineClass = "grid-line-month";
+      else if(cfg.showWeek && isWeekStart) lineClass = "grid-line-strong";
+      svg += '<line x1="'+x+'" y1="'+HEADER_H+'" x2="'+x+'" y2="'+chartH+'" class="'+lineClass+'" opacity="'+(lineClass==='grid-line'?0.5:1)+'"></line>';
+      if(cfg.showMonth && (isMonthStart || i === 0)){
+        svg += '<text x="'+(x+3)+'" y="'+monthLabelY+'" class="axis-label-month">'+fmtMonth(d)+'</text>';
+      }
+      if(cfg.showWeek && (isWeekStart || i === 0)){
+        svg += '<text x="'+(x+3)+'" y="'+weekLabelY+'" class="axis-label">'+fmtShort(d)+'</text>';
+      }
+      if(cfg.showDay && (i % dayLabelStep === 0)){
+        svg += '<text x="'+(x+3)+'" y="'+dayLabelY+'" class="axis-label">'+fmtShort(d)+'</text>';
+      }
+    }
+    var xEnd = PAD + totalDays * pxPerDay;
+    svg += '<line x1="'+xEnd+'" y1="'+HEADER_H+'" x2="'+xEnd+'" y2="'+chartH+'" class="grid-line"></line>';
+    if(cfg.headerRows === 2){
+      var dividerY = 26 + headerExtra;
+      svg += '<line x1="0" y1="'+dividerY+'" x2="'+chartW+'" y2="'+dividerY+'" class="grid-line"></line>';
+    }
+
+    // dependency connectors (resolved to nearest visible ancestor on both ends)
+    var drawnPairs = new Set();
+    visRows.forEach(function(row){
+      var t = row.task;
+      var leafInfo = full.core.byId.get(t.id);
+      var depIds = leafInfo ? (leafInfo.deps || []) : [];
+      depIds.forEach(function(depId){
+        var succVis = resolveVisibleId(t.id);
+        var predVis = resolveVisibleId(depId);
+        if(!succVis || !predVis || succVis === predVis) return;
+        var pairKey = predVis+">"+succVis;
+        if(drawnPairs.has(pairKey)) return;
+        drawnPairs.add(pairKey);
+        var predInfo = full.infoFor(predVis), succInfo = full.infoFor(succVis);
+        if(!predInfo.scheduled || !succInfo.scheduled) return;
+        var predY = HEADER_H + rowIndexById.get(predVis) * ROW_H + ROW_H/2;
+        var succY = HEADER_H + rowIndexById.get(succVis) * ROW_H + ROW_H/2;
+        var predEndX = PAD + (daysBetween(domainStart, predInfo.endDate) + 1) * pxPerDay;
+        var startX = PAD + daysBetween(domainStart, succInfo.startDate) * pxPerDay;
+        var midX = Math.max(predEndX + 8, startX - 8);
+        svg += '<path d="M '+predEndX+' '+predY+' H '+midX+' V '+succY+' H '+(startX-2)+'" class="dep-line" marker-end="url(#arrow)"></path>';
+      });
+    });
+
+    // bars / summary bars / milestones
+    visRows.forEach(function(row, rowIdx){
+      var t = row.task;
+      var info = full.infoFor(t.id);
+      var y = HEADER_H + rowIdx * ROW_H + 7;
+      var barH = ROW_H - 14;
+      var colorHex = effectiveColorHex(t, full.tasksById);
+      var titleLines = [];
+      if(t.responsible) titleLines.push('Responsável: '+t.responsible);
+      if(p.showNotes && t.notes) titleLines.push('Observação: '+t.notes);
+      var titleAttr = titleLines.length ? ('<title>'+esc(titleLines.join("\n"))+'</title>') : '';
+
+      var rowCenterY = y + barH/2;
+      var rowTop = HEADER_H + rowIdx * ROW_H;
+      var rowBand = '<rect class="row-hover-band" x="0" y="'+rowTop+'" width="'+chartW+'" height="'+ROW_H+'"></rect>';
+      var rowContent = '';
+
+      if(!info.isGroup && info.duration === 0){
+        var cx = PAD + daysBetween(domainStart, info.startDate) * pxPerDay + pxPerDay/2;
+        var cy = y + barH/2;
+        var done = (info.progress||0) >= 100;
+        var paint = resolveMilestonePaint(colorHex, done);
+        if(cx - 7 > 2){ rowContent += '<line x1="0" y1="'+rowCenterY+'" x2="'+(cx-7)+'" y2="'+rowCenterY+'" class="leader-line"></line>'; }
+        rowContent += '<g>'+milestoneShapeSvg(t.milestoneIcon || "diamond", cx, cy, 7, paint)+titleAttr+'</g>';
+        rowContent += '<text x="'+(cx+13)+'" y="'+(cy+1)+'" class="milestone-label">'+esc(t.name || "(sem nome)")+'</text>';
+        rowContent += '<text x="'+(cx+13)+'" y="'+(cy+12)+'" class="milestone-date-label">'+fmtFull(info.endDate)+'</text>';
+        svg += '<g class="gantt-row-g" data-task-id="'+t.id+'">'+rowBand+rowContent+'</g>';
+        return;
+      }
+
+      var isGroupRow = info.isGroup;
+      var effH = isGroupRow ? Math.round(barH*0.55) : barH;
+      var by = y + (barH - effH)/2;
+      var bx = PAD + daysBetween(domainStart, info.startDate) * pxPerDay + 2;
+      var bw = Math.max((daysBetween(info.startDate, info.endDate) + 1) * pxPerDay - 4, 4);
+      if(bx > 2){ rowContent += '<line x1="0" y1="'+rowCenterY+'" x2="'+bx+'" y2="'+rowCenterY+'" class="leader-line"></line>'; }
+      var clipId = "clip-"+t.id.replace(/[^a-zA-Z0-9_-]/g,"");
+      var progress = info.progress || 0;
+      var pw = Math.max(bw * progress/100, 0);
+
+      rowContent += '<clipPath id="'+clipId+'"><rect x="'+bx+'" y="'+by+'" width="'+bw+'" height="'+effH+'" rx="3"></rect></clipPath>';
+
+      var trackClass = colorHex ? "" : (isGroupRow ? "bar-track-group" : (t.atRisk ? "bar-track-risk" : "bar-track-normal"));
+      var trackStyle = colorHex ? ('fill:'+hexToRgba(colorHex,0.22)+'; stroke:'+colorHex+'; stroke-width:1;') : "";
+      rowContent += '<rect x="'+bx+'" y="'+by+'" width="'+bw+'" height="'+effH+'" rx="3" class="'+trackClass+'" style="'+trackStyle+'">'+titleAttr+'</rect>';
+
+      if(pw > 0){
+        var progClass = colorHex ? "" : (isGroupRow ? "bar-progress-group" : (t.atRisk ? "bar-progress-risk" : "bar-progress-normal"));
+        var progStyle = colorHex ? ('fill:'+colorHex+';') : "";
+        rowContent += '<rect x="'+bx+'" y="'+by+'" width="'+pw+'" height="'+effH+'" class="'+progClass+'" style="'+progStyle+'" clip-path="url(#'+clipId+')"></rect>';
+      }
+      if(t.atRisk){
+        rowContent += '<rect x="'+bx+'" y="'+by+'" width="'+bw+'" height="'+effH+'" class="hatch-overlay" clip-path="url(#'+clipId+')"></rect>';
+      }
+      if(bw > 26){
+        var labelTxt = (isGroupRow || p.barLabelMode !== "duration") ? (progress+"%") : (info.duration+"d");
+        rowContent += '<text x="'+(bx+bw+6)+'" y="'+(by+effH/2+3.5)+'" class="pct-label">'+labelTxt+'</text>';
+      }
+      svg += '<g class="gantt-row-g" data-task-id="'+t.id+'">'+rowBand+rowContent+'</g>';
+    });
+
+    var today = todayDate();
+    var todayOffset = daysBetween(domainStart, today);
+    if(todayOffset >= 0 && todayOffset <= totalDays){
+      var tx = PAD + todayOffset * pxPerDay;
+      svg += '<line x1="'+tx+'" y1="'+HEADER_H+'" x2="'+tx+'" y2="'+chartH+'" class="today-line"></line>';
+      svg += '<text x="'+(tx+4)+'" y="11" class="today-label">HOJE</text>';
+    }
+
+    svg += '</svg>';
+
+    var labelRows = visRows.map(function(row){
+      var t = row.task;
+      var info = full.infoFor(t.id);
+      return '<div class="gantt-label-row'+(info.isGroup?' is-group':'')+'" data-task-id="'+t.id+'" style="padding-left:'+(10+row.depth*14)+'px;">' +
+        (t.atRisk ? '<span class="risk-dot"></span>' : '') +
+        '<span class="gantt-label-name">'+esc(t.name || '(sem nome)')+'</span>' +
+      '</div>';
+    }).join("");
+
+    var generated = todayDate();
+    var scaleLabels = {days:"Dias", weeks:"Semanas", months:"Meses", both:"Ambos"};
+    var scaleTitles = {
+      days:"Uma coluna por dia — mais detalhe, indicado para cronogramas curtos.",
+      weeks:"Uma coluna por semana — bom equilíbrio entre detalhe e visão geral.",
+      months:"Uma coluna por mês — visão geral, indicado para cronogramas longos.",
+      both:"Mostra semanas e meses juntos, em duas linhas de cabeçalho."
+    };
+    var scaleBtns = ["days","weeks","months","both"].map(function(m){
+      return '<button class="seg-btn'+(p.ganttScale===m?' active':'')+'" type="button" data-action="set-scale" data-mode="'+m+'" title="'+esc(scaleTitles[m])+'">'+scaleLabels[m]+'</button>';
+    }).join("");
+    var labelTitles = {
+      percent:"Mostra o percentual concluído ao lado de cada barra.",
+      duration:"Mostra a duração (em dias) ao lado de cada barra."
+    };
+    var labelBtns = ['percent','duration'].map(function(m){
+      return '<button class="seg-btn'+(p.barLabelMode===m?' active':'')+'" type="button" data-action="set-bar-label" data-mode="'+m+'" title="'+esc(labelTitles[m])+'">'+(m==='percent'?'%':'Duração')+'</button>';
+    }).join("");
+    var diamondPaint = { fill:"var(--sage)", stroke:"var(--sage)", strokeWidth:1.5 };
+    var zoomBtns = '' +
+      '<button class="seg-btn" type="button" data-action="gantt-zoom" data-dir="out" title="Afastar — reduz o tamanho das barras para caber mais período na tela.">−</button>' +
+      '<button class="seg-btn" type="button" data-action="gantt-zoom" data-dir="reset" title="Redefinir o zoom para 100%.">'+Math.round(ganttZoom*100)+'%</button>' +
+      '<button class="seg-btn" type="button" data-action="gantt-zoom" data-dir="in" title="Aproximar — aumenta o tamanho das barras para facilitar a leitura.">+</button>' +
+      '<button class="seg-btn" type="button" data-action="gantt-zoom" data-dir="fit" title="Ajusta automaticamente o zoom para que o cronograma inteiro caiba na largura visível da tela.">Ajustar</button>';
+
+    return '' +
+      '<div class="gantt-panel">' +
+        '<div class="gantt-controls">' +
+          '<div class="control-group"><span class="control-label" title="Define a granularidade das colunas de tempo no gráfico.">Escala</span><div class="seg-group">'+scaleBtns+'</div></div>' +
+          '<div class="control-group"><span class="control-label" title="Escolhe o que aparece escrito ao lado de cada barra do gráfico.">Rótulo da barra</span><div class="seg-group">'+labelBtns+'</div></div>' +
+          '<div class="control-group"><span class="control-label" title="Amplia ou reduz o tamanho das barras para caber mais ou menos período na tela visível.">Zoom</span><div class="seg-group">'+zoomBtns+'</div></div>' +
+        '</div>' +
+        '<div class="gantt-scroll">' +
+          '<div class="gantt-grid" style="grid-template-columns:'+labelWidth+'px 1fr;">' +
+            '<div class="gantt-labels">' +
+              '<div class="gantt-resize-handle" data-action="resize-gantt-labels" title="Arrastar para redimensionar a coluna de atividades"></div>' +
+              '<div class="gantt-label-row gantt-label-header" style="height:'+HEADER_H+'px;"></div>'+labelRows+
+            '</div>' +
+            '<div>'+svg+'</div>' +
+          '</div>' +
+        '</div>' +
+        '<div class="legend">' +
+          '<span class="legend-item"><span class="legend-swatch legend-swatch-track"></span>Planejado</span>' +
+          '<span class="legend-item"><span class="legend-swatch legend-swatch-progress"></span>Executado</span>' +
+          '<span class="legend-item"><span class="legend-swatch legend-swatch-hatch"></span>Em risco</span>' +
+          '<span class="legend-item"><svg class="legend-icon" viewBox="0 0 20 20">'+milestoneShapeSvg("diamond",10,10,7,diamondPaint)+'</svg>Marco</span>' +
+          '<span class="legend-item"><span class="legend-line"></span>Hoje</span>' +
+          '<span class="legend-item"><span class="legend-swatch" style="background:var(--weekend); border:1px solid var(--line);"></span>Fim de semana</span>' +
+        '</div>' +
+        '<div class="gantt-footer">' +
+          '<span><b>'+esc(p.name)+'</b></span>' +
+          '<span>Início '+fmtFull(full.core.projectStartDate)+'</span>' +
+          '<span>Duração '+full.core.projectDuration+(p.businessDaysOnly?' d. úteis':' dias')+'</span>' +
+          '<span>Gerado em '+fmtFull(generated)+'</span>' +
+        '</div>' +
+      '</div>';
+  }
+
+  // ---------------- mutation helpers ----------------
+  function markNotExample(p){ if(p.isExample) p.isExample = false; }
+
+  function handleFieldChange(el){
+    var field = el.getAttribute("data-field");
+    var scope = el.getAttribute("data-scope");
+    var proj = activeProject();
+    if(!proj) return;
+    if(scope === "project"){
+      if(field === "name") proj.name = el.value.trim() || "Projeto sem nome";
+      else if(field === "startDate") proj.startDate = el.value || toISO(todayDate());
+      else if(field === "businessDaysOnly") proj.businessDaysOnly = el.checked;
+      else if(field === "showResponsible") proj.showResponsible = el.checked;
+      else if(field === "showPredecessors") proj.showPredecessors = el.checked;
+      else if(field === "showNotes") proj.showNotes = el.checked;
+      else if(field === "dueSoonEnabled") proj.dueSoonEnabled = el.checked;
+      else if(field === "dueSoonDays"){
+        var dv = Math.round(Number(el.value));
+        if(isNaN(dv) || dv < 0) dv = 0;
+        proj.dueSoonDays = dv;
+      }
+      else if(field === "replanEnabled") proj.replanEnabled = el.checked;
+      markNotExample(proj);
+      saveAndRender();
+      return;
+    }
+    var taskId = el.getAttribute("data-task-id");
+    var task = proj.tasks.filter(function(t){ return t.id === taskId; })[0];
+    if(!task) return;
+    ui.selectedTaskId = taskId;
+    if(field === "name") task.name = el.value;
+    else if(field === "responsible") task.responsible = el.value;
+    else if(field === "notes") task.notes = el.value;
+    else if(field === "duration"){
+      var v = Math.round(Number(el.value));
+      if(isNaN(v) || v < 0) v = 0;
+      task.duration = v;
+    } else if(field === "progress"){
+      var pv = Math.round(Number(el.value));
+      if(isNaN(pv)) pv = 0;
+      task.progress = Math.min(100, Math.max(0, pv));
+    } else if(field === "milestoneDone"){
+      task.progress = el.checked ? 100 : 0;
+    } else if(field === "startOverride"){
+      var newStartIso = el.value || null;
+      task.startOverride = newStartIso;
+      markNotExample(proj);
+      persist(); render();
+      if(newStartIso){
+        var fChk = computeFullSchedule(proj);
+        var iChk = fChk.infoFor(task.id);
+        if(iChk.scheduled && toISO(iChk.startDate) !== newStartIso){
+          showToast("Data ajustada para "+fmtFull(iChk.startDate)+" — não é possível iniciar antes das predecessoras.");
+        }
+      }
+      return;
+    } else if(field === "endDateManual"){
+      var newEndIso = el.value;
+      if(newEndIso){
+        var fEnd = computeFullSchedule(proj);
+        var iEnd = fEnd.infoFor(task.id);
+        if(iEnd.scheduled && !iEnd.isGroup){
+          var seqEnd = fEnd.core.workingDates;
+          var endIdx = indexOfDateOrAfter(seqEnd, parseISO(newEndIso));
+          task.duration = Math.max(1, endIdx - iEnd.es + 1);
+        }
+      }
+    }
+    markNotExample(proj);
+    saveAndRender();
+  }
+
+  // Commits a manually typed or pasted value from a date's plain-text field. The text field
+  // itself carries no data-field/task-id — it's paired by DOM position with the real native
+  // <input type="date"> (its ".date-native-input" sibling, shown alongside it as the calendar
+  // picker) that already carries those attributes and feeds the existing handleFieldChange
+  // logic, so parsing here just needs to set that input's value and dispatch "change" on it,
+  // same as if the picker had been used.
+  function handleDateTextChange(el){
+    var wrap = el.closest(".date-field");
+    var native = wrap ? wrap.querySelector(".date-native-input") : null;
+    if(!native) return;
+    var raw = el.value.trim();
+    if(!raw){
+      var fieldName = native.getAttribute("data-field");
+      if(fieldName === "startOverride"){
+        native.value = "";
+        native.dispatchEvent(new Event("change", { bubbles:true }));
+      } else {
+        showToast("Data obrigatória. O campo foi restaurado.");
+        render();
+      }
+      return;
+    }
+    var iso = parseFlexibleDate(raw);
+    if(!iso){
+      showToast("Data não reconhecida. Use o formato dd/mm/aaaa.");
+      render();
+      return;
+    }
+    native.value = iso;
+    native.dispatchEvent(new Event("change", { bubbles:true }));
+  }
+
+  function closePopover(){ ui.popover = null; }
+
+  root.addEventListener("focusin", function(e){
+    var el = e.target.closest("[data-task-id]");
+    if(el) ui.selectedTaskId = el.getAttribute("data-task-id");
+  });
+
+  root.addEventListener("change", function(e){
+    var dateText = e.target.closest(".date-text-input");
+    if(dateText){ handleDateTextChange(dateText); return; }
+    var el = e.target.closest("[data-field]");
+    if(el){ handleFieldChange(el); return; }
+    var depToggle = e.target.closest('[data-action="toggle-dep"]');
+    if(depToggle){
+      var proj = activeProject();
+      if(!proj) return;
+      var ownerId = depToggle.getAttribute("data-task-id");
+      var depId = depToggle.getAttribute("data-dep-id");
+      var owner = proj.tasks.filter(function(t){ return t.id === ownerId; })[0];
+      if(!owner) return;
+      owner.deps = owner.deps || [];
+      var i = owner.deps.indexOf(depId);
+      if(depToggle.checked && i === -1) owner.deps.push(depId);
+      else if(!depToggle.checked && i !== -1) owner.deps.splice(i, 1);
+      markNotExample(proj);
+      saveAndRender();
+      return;
+    }
+    var selectToggle = e.target.closest('[data-action="toggle-select-task"]');
+    if(selectToggle){
+      var stId = selectToggle.getAttribute("data-id");
+      if(selectToggle.checked) ui.bulkSelectedIds.add(stId);
+      else ui.bulkSelectedIds.delete(stId);
+      render();
+      return;
+    }
+    var selectGroupToggle = e.target.closest('[data-action="toggle-select-group"]');
+    if(selectGroupToggle){
+      var sgProj = activeProject();
+      if(sgProj){
+        var sgChildrenMap = buildChildrenMap(sgProj.tasks);
+        var sgLeafIds = leafDescendants(selectGroupToggle.getAttribute("data-id"), sgChildrenMap);
+        if(selectGroupToggle.checked) sgLeafIds.forEach(function(id){ ui.bulkSelectedIds.add(id); });
+        else sgLeafIds.forEach(function(id){ ui.bulkSelectedIds.delete(id); });
+      }
+      render();
+      return;
+    }
+    var selectAllToggle = e.target.closest('[data-action="toggle-select-all-tasks"]');
+    if(selectAllToggle){
+      var projSA = activeProject();
+      if(projSA){
+        var rowsSA2 = buildDisplayRows(projSA);
+        var fullSA2 = computeFullSchedule(projSA);
+        var selectableSA2 = rowsSA2.filter(function(r){ return !fullSA2.isGroup(r.task.id); }).map(function(r){ return r.task.id; });
+        if(selectAllToggle.checked) selectableSA2.forEach(function(id){ ui.bulkSelectedIds.add(id); });
+        else selectableSA2.forEach(function(id){ ui.bulkSelectedIds.delete(id); });
+      }
+      render();
+      return;
+    }
+  });
+
+  root.addEventListener("keydown", function(e){
+    if(e.key === "Enter" && e.target.matches(".name-input, .dur-input, .title-input, .responsible-input, .notes-input, .progress-input, .date-text-input")){
+      e.target.blur();
+    }
+    if(e.key === "Escape" && ui.popover){ closePopover(); render(); }
+  });
+
+  root.addEventListener("input", function(e){
+    if(e.target.id === "projectSearchInput"){
+      ui.projectSearch = e.target.value;
+      applyProjectFilter();
+    }
+  });
+
+  // Drag-to-resize for the Gantt activity-name column. Mutates the grid's column width
+  // directly during the drag for smooth feedback (no full re-render mid-drag), and only
+  // persists the final width — and re-renders once — on mouseup.
+  root.addEventListener("mousedown", function(e){
+    var handle = e.target.closest('[data-action="resize-gantt-labels"]');
+    if(!handle) return;
+    var proj = activeProject();
+    if(!proj) return;
+    e.preventDefault();
+    var startX = e.clientX;
+    var startWidth = proj.ganttLabelWidth || 220;
+    var grid = handle.closest(".gantt-grid");
+    function onMove(evMove){
+      var next = Math.max(100, Math.min(560, startWidth + (evMove.clientX - startX)));
+      if(grid) grid.style.gridTemplateColumns = next+"px 1fr";
+    }
+    function onUp(evUp){
+      document.removeEventListener("mousemove", onMove);
+      document.removeEventListener("mouseup", onUp);
+      var finalWidth = Math.max(100, Math.min(560, startWidth + (evUp.clientX - startX)));
+      proj.ganttLabelWidth = finalWidth;
+      markNotExample(proj);
+      saveAndRender();
+    }
+    document.addEventListener("mousemove", onMove);
+    document.addEventListener("mouseup", onUp);
+  });
+
+  // Hover sync between a Gantt row's label and its bar: both carry a matching
+  // data-task-id, so a lightweight class toggle (no re-render) highlights both.
+  var ganttHoverIds = [];
+  function clearGanttHover(){
+    ganttHoverIds.forEach(function(id){
+      root.querySelectorAll('.gantt-panel [data-task-id="'+id+'"]').forEach(function(el){ el.classList.remove("gantt-hover"); });
+    });
+    ganttHoverIds = [];
+  }
+  function setGanttHover(id){
+    root.querySelectorAll('.gantt-panel [data-task-id="'+id+'"]').forEach(function(el){ el.classList.add("gantt-hover"); });
+    ganttHoverIds = [id];
+  }
+  var lastGanttHoverId = null;
+  root.addEventListener("mouseover", function(e){
+    var el = e.target.closest(".gantt-panel [data-task-id]");
+    var id = el ? el.getAttribute("data-task-id") : null;
+    if(id === lastGanttHoverId) return;
+    clearGanttHover();
+    lastGanttHoverId = id;
+    if(id) setGanttHover(id);
+  });
+  root.addEventListener("mouseout", function(e){
+    var to = e.relatedTarget;
+    if(to && to.closest && to.closest(".gantt-panel [data-task-id]")) return;
+    clearGanttHover();
+    lastGanttHoverId = null;
+  });
+
+  root.addEventListener("click", function(e){
+    var rowEl = e.target.closest("tr[data-row-id]");
+    if(rowEl && !e.target.closest("input,button,textarea,select,label")){
+      ui.selectedTaskId = rowEl.getAttribute("data-row-id");
+      render();
+      return;
+    }
+
+    var actionEl = e.target.closest("[data-action]");
+    if(!actionEl){
+      if(ui.popover && !e.target.closest(".dep-menu")){ closePopover(); render(); }
+      return;
+    }
+    var action = actionEl.getAttribute("data-action");
+    var proj = activeProject();
+
+    if(action === "select-project"){
+      state.activeId = actionEl.getAttribute("data-id");
+      ui.selectedTaskId = null;
+      ui.bulkSelectedIds.clear();
+      closePopover();
+      saveAndRender();
+      return;
+    }
+    if(action === "toggle-sidebar"){
+      state.sidebarCollapsed = !state.sidebarCollapsed;
+      persist();
+      render();
+      return;
+    }
+    if(action === "toggle-pin-project"){
+      var pinId = actionEl.getAttribute("data-id");
+      var pinProj = state.projects.filter(function(pp){ return pp.id === pinId; })[0];
+      if(pinProj){ pinProj.pinned = !pinProj.pinned; saveAndRender(); }
+      return;
+    }
+    if(action === "new-project"){
+      var np = { id:genId(), name:"Novo projeto", startDate: toISO(todayDate()), businessDaysOnly:true, showResponsible:false, showPredecessors:true, showNotes:false, pinned:false, dueSoonEnabled:false, dueSoonDays:3, replanEnabled:false, barLabelMode:"percent", ganttScale:"weeks", ganttZoom:1, ganttLabelWidth:220, isExample:false, tasks:[] };
+      state.projects.push(np);
+      state.activeId = np.id;
+      ui.selectedTaskId = null;
+      saveAndRender();
+      return;
+    }
+    if(action === "delete-project"){
+      var pid = actionEl.getAttribute("data-id");
+      if(ui.pendingDelete && ui.pendingDelete.kind === "project" && ui.pendingDelete.id === pid){
+        state.projects = state.projects.filter(function(p){ return p.id !== pid; });
+        if(state.activeId === pid) state.activeId = state.projects.length ? state.projects[0].id : null;
+        ui.pendingDelete = null;
+        if(pendingDeleteTimer) clearTimeout(pendingDeleteTimer);
+        saveAndRender();
+      } else {
+        ui.pendingDelete = { kind:"project", id:pid };
+        if(pendingDeleteTimer) clearTimeout(pendingDeleteTimer);
+        pendingDeleteTimer = setTimeout(function(){ ui.pendingDelete = null; render(); }, 3000);
+        render();
+      }
+      return;
+    }
+    if(action === "add-task"){
+      if(!proj) return;
+      var newTask = defaultTask({});
+      var selTask = ui.selectedTaskId ? proj.tasks.filter(function(t){ return t.id === ui.selectedTaskId; })[0] : null;
+      if(selTask){
+        newTask.parentId = selTask.parentId || null;
+        proj.tasks.push(newTask);
+        relocateSubtreeAfter(proj.tasks, newTask.id, selTask.id);
+      } else {
+        proj.tasks.push(newTask);
+      }
+      ui.selectedTaskId = newTask.id;
+      ui.focusNextId = newTask.id;
+      markNotExample(proj);
+      saveAndRender();
+      return;
+    }
+    if(action === "add-subtask"){
+      if(!proj) return;
+      var parentId = actionEl.getAttribute("data-id");
+      var parent = proj.tasks.filter(function(t){ return t.id === parentId; })[0];
+      if(!parent) return;
+      var childTask = defaultTask({ parentId:parentId });
+      proj.tasks.push(childTask);
+      parent.collapsed = false;
+      ui.selectedTaskId = childTask.id;
+      ui.focusNextId = childTask.id;
+      markNotExample(proj);
+      saveAndRender();
+      return;
+    }
+    if(action === "indent-task"){
+      if(!proj) return;
+      var idT = actionEl.getAttribute("data-id");
+      if(indentTask(proj, idT)){ markNotExample(proj); ui.selectedTaskId = idT; saveAndRender(); }
+      return;
+    }
+    if(action === "outdent-task"){
+      if(!proj) return;
+      var idT2 = actionEl.getAttribute("data-id");
+      if(outdentTask(proj, idT2)){ markNotExample(proj); ui.selectedTaskId = idT2; saveAndRender(); }
+      return;
+    }
+    if(action === "move-up" || action === "move-down"){
+      if(!proj) return;
+      var idT3 = actionEl.getAttribute("data-id");
+      if(moveTask(proj, idT3, action === "move-up" ? -1 : 1)){ ui.selectedTaskId = idT3; saveAndRender(); }
+      return;
+    }
+    if(action === "dur-step"){
+      if(!proj) return;
+      var idDS = actionEl.getAttribute("data-id");
+      var dir = actionEl.getAttribute("data-dir");
+      var tDS = proj.tasks.filter(function(t){ return t.id === idDS; })[0];
+      if(tDS){
+        var nv = (tDS.duration||0) + (dir === "up" ? 1 : -1);
+        if(nv < 0) nv = 0;
+        tDS.duration = nv;
+        markNotExample(proj);
+        ui.selectedTaskId = idDS;
+        saveAndRender();
+      }
+      return;
+    }
+    if(action === "toggle-at-risk"){
+      if(!proj) return;
+      var idAR = actionEl.getAttribute("data-id");
+      var tAR = proj.tasks.filter(function(t){ return t.id === idAR; })[0];
+      if(tAR){ tAR.atRisk = !tAR.atRisk; markNotExample(proj); ui.selectedTaskId = idAR; saveAndRender(); }
+      return;
+    }
+    if(action === "accept-baseline"){
+      if(!proj) return;
+      var idAB = actionEl.getAttribute("data-id");
+      var tAB = proj.tasks.filter(function(t){ return t.id === idAB; })[0];
+      if(tAB){
+        var fullAB = computeFullSchedule(proj);
+        var infoAB = fullAB.infoFor(idAB);
+        if(infoAB.scheduled){
+          tAB.baselineStart = toISO(infoAB.startDate);
+          tAB.baselineEnd = toISO(infoAB.endDate);
+          tAB.lastSeenStart = tAB.baselineStart;
+          tAB.lastSeenEnd = tAB.baselineEnd;
+          tAB.replanCount = 0;
+        }
+        markNotExample(proj);
+        ui.selectedTaskId = idAB;
+        saveAndRender();
+      }
+      return;
+    }
+    if(action === "bulk-complete"){
+      if(!proj) return;
+      var fullBC = computeFullSchedule(proj);
+      var doneCount = 0;
+      proj.tasks.forEach(function(t){
+        if(ui.bulkSelectedIds.has(t.id) && !fullBC.isGroup(t.id)){
+          t.progress = 100;
+          doneCount++;
+        }
+      });
+      ui.bulkSelectedIds.clear();
+      if(doneCount){
+        markNotExample(proj);
+        persist();
+        showToast(doneCount === 1 ? "1 atividade concluída." : (doneCount + " atividades concluídas."));
+      } else {
+        render();
+      }
+      return;
+    }
+    if(action === "clear-selection"){
+      ui.bulkSelectedIds.clear();
+      render();
+      return;
+    }
+    if(action === "clear-start-override"){
+      if(!proj) return;
+      var idCS = actionEl.getAttribute("data-id");
+      var tCS = proj.tasks.filter(function(t){ return t.id === idCS; })[0];
+      if(tCS){ tCS.startOverride = null; markNotExample(proj); ui.selectedTaskId = idCS; saveAndRender(); }
+      return;
+    }
+    if(action === "toggle-collapse"){
+      if(!proj) return;
+      var gid = actionEl.getAttribute("data-id");
+      var gtask = proj.tasks.filter(function(t){ return t.id === gid; })[0];
+      if(gtask){ gtask.collapsed = !gtask.collapsed; saveAndRender(); }
+      return;
+    }
+    if(action === "set-milestone"){
+      if(!proj) return;
+      var mid = actionEl.getAttribute("data-id");
+      var mtask = proj.tasks.filter(function(t){ return t.id === mid; })[0];
+      if(mtask){ mtask.duration = 0; markNotExample(proj); saveAndRender(); }
+      return;
+    }
+    if(action === "unset-milestone"){
+      if(!proj) return;
+      var uid = actionEl.getAttribute("data-id");
+      var utask = proj.tasks.filter(function(t){ return t.id === uid; })[0];
+      if(utask){ utask.duration = 1; markNotExample(proj); saveAndRender(); }
+      return;
+    }
+    if(action === "open-milestone-menu"){
+      var rect3 = actionEl.getBoundingClientRect();
+      var left3 = Math.min(rect3.left, window.innerWidth - 206);
+      ui.popover = { type:"milestoneIcon", taskId: actionEl.getAttribute("data-task-id"), pos:{ top: rect3.bottom + 6, left: Math.max(left3, 8) } };
+      render();
+      return;
+    }
+    if(action === "set-milestone-icon"){
+      var ownerId3 = actionEl.getAttribute("data-task-id");
+      var iconKey = actionEl.getAttribute("data-icon");
+      var ownerT3 = proj.tasks.filter(function(t){ return t.id === ownerId3; })[0];
+      if(ownerT3){ ownerT3.milestoneIcon = iconKey; markNotExample(proj); }
+      closePopover();
+      saveAndRender();
+      return;
+    }
+    if(action === "delete-task"){
+      var tid = actionEl.getAttribute("data-id");
+      if(ui.pendingDelete && ui.pendingDelete.kind === "task" && ui.pendingDelete.id === tid){
+        var childrenMap = buildChildrenMap(proj.tasks);
+        var toDelete = new Set([tid].concat(allDescendantIds(tid, childrenMap)));
+        proj.tasks = proj.tasks.filter(function(t){ return !toDelete.has(t.id); });
+        proj.tasks.forEach(function(t){ t.deps = (t.deps||[]).filter(function(d){ return !toDelete.has(d); }); });
+        if(toDelete.has(ui.selectedTaskId)) ui.selectedTaskId = null;
+        markNotExample(proj);
+        ui.pendingDelete = null;
+        if(pendingDeleteTimer) clearTimeout(pendingDeleteTimer);
+        saveAndRender();
+      } else {
+        ui.pendingDelete = { kind:"task", id:tid };
+        if(pendingDeleteTimer) clearTimeout(pendingDeleteTimer);
+        pendingDeleteTimer = setTimeout(function(){ ui.pendingDelete = null; render(); }, 3000);
+        render();
+      }
+      return;
+    }
+    if(action === "add-dep"){
+      var rect = actionEl.getBoundingClientRect();
+      var left = Math.min(rect.left, window.innerWidth - 252);
+      ui.popover = { type:"dep", taskId: actionEl.getAttribute("data-task-id"), pos:{ top: rect.bottom + 6, left: Math.max(left, 8) } };
+      render();
+      return;
+    }
+    if(action === "open-color-menu"){
+      var rect2 = actionEl.getBoundingClientRect();
+      var left2 = Math.min(rect2.left, window.innerWidth - 210);
+      ui.popover = { type:"color", taskId: actionEl.getAttribute("data-task-id"), pos:{ top: rect2.bottom + 6, left: Math.max(left2, 8) } };
+      render();
+      return;
+    }
+    if(action === "set-color"){
+      var ownerId2 = actionEl.getAttribute("data-task-id");
+      var colorKey = actionEl.getAttribute("data-color");
+      var ownerT = proj.tasks.filter(function(t){ return t.id === ownerId2; })[0];
+      if(ownerT){ ownerT.color = colorKey || null; markNotExample(proj); }
+      closePopover();
+      saveAndRender();
+      return;
+    }
+    if(action === "close-popover"){ closePopover(); render(); return; }
+    if(action === "remove-dep"){
+      var ownerId = actionEl.getAttribute("data-task-id");
+      var depId = actionEl.getAttribute("data-dep-id");
+      var owner = proj.tasks.filter(function(t){ return t.id === ownerId; })[0];
+      if(owner){ owner.deps = (owner.deps||[]).filter(function(d){ return d !== depId; }); markNotExample(proj); saveAndRender(); }
+      return;
+    }
+    if(action === "set-scale"){
+      if(!proj) return;
+      proj.ganttScale = actionEl.getAttribute("data-mode");
+      saveAndRender();
+      return;
+    }
+    if(action === "set-bar-label"){
+      if(!proj) return;
+      proj.barLabelMode = actionEl.getAttribute("data-mode");
+      saveAndRender();
+      return;
+    }
+    if(action === "gantt-zoom"){
+      if(!proj) return;
+      var dir = actionEl.getAttribute("data-dir");
+      var z = proj.ganttZoom || 1;
+      if(dir === "in") z = Math.min(3, +(z*1.2).toFixed(2));
+      else if(dir === "out") z = Math.max(0.3, +(z/1.2).toFixed(2));
+      else if(dir === "reset") z = 1;
+      else if(dir === "fit"){
+        var fullFit = computeFullSchedule(proj);
+        var totalDaysFit = Math.max(daysBetween(fullFit.core.projectStartDate, fullFit.core.projectEndDate) + 1, 1);
+        var baseFit = basePxPerDayFor(totalDaysFit);
+        var scrollEl = root.querySelector(".gantt-scroll");
+        var labelWFit = proj.ganttLabelWidth || 220;
+        var avail = scrollEl ? scrollEl.clientWidth : 900;
+        var availForChart = Math.max(200, avail - labelWFit);
+        var neededPxPerDay = Math.max(4, (availForChart - 10*2 - 170) / totalDaysFit);
+        z = Math.max(0.3, Math.min(3, +(neededPxPerDay / baseFit).toFixed(2)));
+      }
+      proj.ganttZoom = z;
+      markNotExample(proj);
+      saveAndRender();
+      return;
+    }
+    if(action === "export-excel"){ exportExcel(); return; }
+    if(action === "export-png"){ exportPng(); return; }
+    if(action === "copy-backup"){
+      var text = JSON.stringify(state, null, 2);
+      var done = function(){ showToast("Backup copiado para a área de transferência."); };
+      var fail = function(){
+        try{
+          var ta = document.createElement("textarea");
+          ta.value = text; ta.style.position = "fixed"; ta.style.opacity = "0";
+          document.body.appendChild(ta); ta.focus(); ta.select();
+          document.execCommand("copy");
+          document.body.removeChild(ta);
+          done();
+        }catch(err){ showToast("Não foi possível copiar automaticamente."); }
+      };
+      if(navigator.clipboard && navigator.clipboard.writeText){
+        navigator.clipboard.writeText(text).then(done).catch(fail);
+      } else { fail(); }
+      return;
+    }
+    if(action === "open-restore"){ ui.showRestore = true; ui.restoreText = ""; ui.restoreError = null; render(); return; }
+    if(action === "close-restore" || action === "overlay-restore"){ ui.showRestore = false; render(); return; }
+    if(action === "apply-restore"){
+      var ta2 = document.getElementById("restoreTextarea");
+      var raw = ta2 ? ta2.value : "";
+      ui.restoreText = raw;
+      try{
+        var parsed = JSON.parse(raw);
+        var normalized = normalizeState(parsed);
+        state = normalized;
+        ui.showRestore = false;
+        ui.restoreError = null;
+        ui.selectedTaskId = null;
+        persist();
+        showToast("Backup restaurado.");
+        render();
+      }catch(err){
+        ui.restoreError = "JSON inválido. Verifique o texto colado e tente novamente.";
+        render();
+      }
+      return;
+    }
+    if(action === "open-quickadd"){
+      ui.showQuickAdd = true; ui.quickAddText = ""; ui.quickAddError = null; ui.focusQuickAdd = true; render(); return;
+    }
+    if(action === "close-quickadd" || action === "overlay-quickadd"){ ui.showQuickAdd = false; render(); return; }
+    if(action === "apply-quickadd"){
+      var projQA = activeProject();
+      if(!projQA) return;
+      var taQA = document.getElementById("quickAddTextarea");
+      var rawQA = taQA ? taQA.value : "";
+      ui.quickAddText = rawQA;
+      var lines = rawQA.split(/\r?\n/);
+      var stack = [];
+      var addedIds = [];
+      lines.forEach(function(line){
+        if(!line.trim()) return;
+        var indentWs = line.match(/^[ \t]*/)[0].replace(/\t/g, "  ");
+        var depth = Math.floor(indentWs.length / 2);
+        while(stack.length && stack[stack.length-1].depth >= depth) stack.pop();
+        var parentId = stack.length ? stack[stack.length-1].id : null;
+        var newTaskQA = defaultTask({ name: line.trim(), parentId: parentId });
+        projQA.tasks.push(newTaskQA);
+        addedIds.push(newTaskQA.id);
+        stack.push({ depth: depth, id: newTaskQA.id });
+      });
+      if(addedIds.length){
+        markNotExample(projQA);
+        ui.selectedTaskId = addedIds[addedIds.length - 1];
+        ui.showQuickAdd = false;
+        ui.quickAddText = "";
+        ui.quickAddError = null;
+        persist();
+        showToast(addedIds.length === 1 ? "1 atividade adicionada." : (addedIds.length + " atividades adicionadas."));
+      } else {
+        ui.quickAddError = "Digite ao menos um nome de atividade.";
+        render();
+      }
+      return;
+    }
+  });
+
+  render();
+})();
+</script>

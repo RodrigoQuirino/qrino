@@ -1,0 +1,545 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Fornecedores de Insumos para Impressão 3D — DF e Região</title>
+<meta name="description" content="Listagem de fornecedores de filamento, impressoras e serviços de impressão 3D no Distrito Federal e entorno.">
+<script defer src="https://analytics.zedascompras.com.br/script.js" data-website-id="88516fd5-5736-4986-b884-eaa9d7d9b2c9"></script>
+<style>
+  :root {
+    color-scheme: dark;
+    --bg: #0f172a;
+    --surface: #1e293b;
+    --surface-alt: #263449;
+    --text: #ffffff;
+    --text-muted: #64748b;
+    --border: #334155;
+    --accent: #0ea5e9;
+    --accent-contrast: #0f172a;
+    --whatsapp: #16a34a;
+    --warn: #facc15;
+    --row-hover: #1a2436;
+    --focus: #38bdf8;
+  }
+  * { box-sizing: border-box; }
+  body {
+    margin: 0;
+    background: var(--bg);
+    color: var(--text);
+    font-family: system-ui, -apple-system, Segoe UI, Roboto, sans-serif;
+    line-height: 1.45;
+  }
+  main {
+    max-width: 1100px;
+    margin: 0 auto;
+    padding: 1.5rem 1rem 3rem;
+  }
+  header h1 {
+    font-size: 1.5rem;
+    margin-bottom: 0.25rem;
+  }
+  header p {
+    color: var(--text-muted);
+    margin-top: 0;
+    max-width: 60ch;
+  }
+  .sr-only {
+    position: absolute;
+    width: 1px; height: 1px;
+    overflow: hidden;
+    clip: rect(0,0,0,0);
+    white-space: nowrap;
+  }
+  .banner {
+    background: rgba(250, 204, 21, 0.12);
+    color: var(--warn);
+    border: 1px solid rgba(250, 204, 21, 0.4);
+    border-radius: 10px;
+    padding: 0.6rem 0.9rem;
+    font-size: 0.9rem;
+    margin-bottom: 1rem;
+  }
+  .controls {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.75rem;
+    align-items: end;
+    margin-bottom: 1rem;
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: 12px;
+    padding: 1rem;
+  }
+  .controls[hidden] { display: none; }
+  .field {
+    display: flex;
+    flex-direction: column;
+    gap: 0.25rem;
+    font-size: 0.85rem;
+  }
+  .field label { color: var(--text-muted); }
+  .field input, .field select {
+    padding: 0.45rem 0.5rem;
+    border: 1px solid var(--border);
+    border-radius: 8px;
+    background: var(--bg);
+    color: var(--text);
+    font-size: 0.9rem;
+    min-width: 10rem;
+  }
+  .field input:focus-visible, .field select:focus-visible,
+  button:focus-visible, a:focus-visible {
+    outline: 2px solid var(--focus);
+    outline-offset: 2px;
+  }
+  .actions {
+    display: flex;
+    gap: 0.5rem;
+  }
+  button.refresh, button.clear, button.toggle-filters {
+    padding: 0.5rem 0.9rem;
+    border-radius: 10px;
+    cursor: pointer;
+    font-size: 0.85rem;
+    font-weight: 600;
+    height: fit-content;
+    border: 1px solid transparent;
+  }
+  button.refresh {
+    background: var(--accent);
+    color: var(--accent-contrast);
+  }
+  button.refresh:hover { filter: brightness(1.1); }
+  button.clear, button.toggle-filters {
+    background: transparent;
+    border-color: var(--border);
+    color: var(--text-muted);
+  }
+  button.clear:hover, button.toggle-filters:hover { background: var(--surface-alt); color: var(--text); }
+  button.toggle-filters {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.4rem;
+  }
+  button.toggle-filters .chevron {
+    transition: transform 0.15s ease;
+    font-size: 0.7rem;
+  }
+  button.toggle-filters[aria-expanded="true"] .chevron { transform: rotate(180deg); }
+  .controls-bar {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    flex-wrap: wrap;
+    gap: 0.75rem;
+    margin-bottom: 0.75rem;
+  }
+  .table-wrap {
+    overflow-x: auto;
+    border: 1px solid var(--border);
+    border-radius: 12px;
+    background: var(--surface);
+  }
+  table {
+    border-collapse: collapse;
+    width: 100%;
+    font-size: 0.88rem;
+  }
+  th, td {
+    padding: 0.6rem 0.75rem;
+    text-align: left;
+    border-bottom: 1px solid var(--border);
+    vertical-align: top;
+    white-space: nowrap;
+  }
+  td.wrap, th.wrap { white-space: normal; min-width: 12rem; }
+  th button.sort {
+    all: unset;
+    cursor: pointer;
+    display: inline-flex;
+    align-items: center;
+    gap: 0.3rem;
+    font-weight: 600;
+  }
+  th button.sort:hover { color: var(--accent); }
+  tbody tr:hover { background: var(--row-hover); }
+  .badge-link {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.3rem;
+    text-decoration: none;
+    color: var(--accent);
+    font-weight: 600;
+  }
+  .badge-link:hover { text-decoration: underline; }
+  .badge-link.whatsapp { color: var(--whatsapp); }
+  th.col-toggle, td.col-toggle { width: 2.5rem; }
+  button.row-toggle {
+    all: unset;
+    cursor: pointer;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    width: 1.75rem;
+    height: 1.75rem;
+    border-radius: 6px;
+    color: var(--text-muted);
+  }
+  button.row-toggle:hover { background: var(--surface-alt); color: var(--text); }
+  button.row-toggle .chevron { transition: transform 0.15s ease; display: inline-block; }
+  button.row-toggle[aria-expanded="true"] .chevron { transform: rotate(90deg); }
+  tr.detail-row td {
+    background: var(--bg);
+    white-space: normal;
+  }
+  .detail-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(11rem, 1fr));
+    gap: 0.75rem 1.5rem;
+    margin: 0;
+  }
+  .detail-grid dt {
+    font-size: 0.75rem;
+    color: var(--text-muted);
+    margin-bottom: 0.15rem;
+  }
+  .detail-grid dd { margin: 0; }
+  .status {
+    padding: 2rem 1rem;
+    text-align: center;
+    color: var(--text-muted);
+  }
+  .status.error { color: #f87171; }
+  .count {
+    font-size: 0.85rem;
+    color: var(--text-muted);
+    margin: 0.5rem 0;
+  }
+  footer {
+    margin-top: 2rem;
+    padding-top: 1rem;
+    border-top: 1px solid var(--border);
+    font-size: 0.9rem;
+    color: var(--text-muted);
+  }
+  footer a { color: var(--accent); }
+</style>
+</head>
+<body>
+<main>
+  <header>
+    <h1>Fornecedores de Insumos para Impressão 3D — DF e Região</h1>
+    <p>Lista colaborativa de fornecedores de filamento, impressoras, peças e serviços de manutenção na região de Brasília e entorno.</p>
+  </header>
+
+  <div id="banner" class="banner" hidden></div>
+
+  <div class="controls-bar">
+    <button type="button" class="toggle-filters" id="btn-toggle-filters" aria-expanded="false" aria-controls="filters-panel">
+      Ver filtros <span class="chevron" aria-hidden="true">▾</span>
+    </button>
+    <div class="actions">
+      <button type="button" class="clear" id="btn-clear">Limpar filtros</button>
+      <button type="button" class="refresh" id="btn-refresh">Atualizar lista</button>
+    </div>
+  </div>
+
+  <section id="filters-panel" class="controls" role="search" aria-label="Filtros da lista de fornecedores" hidden>
+    <div class="field">
+      <label for="f-busca">Buscar</label>
+      <input type="search" id="f-busca" placeholder="Nome, cidade ou referência">
+    </div>
+    <div class="field">
+      <label for="f-servico">Tipo de serviço</label>
+      <select id="f-servico"><option value="">Todos</option></select>
+    </div>
+    <div class="field">
+      <label for="f-filamento">Marca de filamento</label>
+      <select id="f-filamento"><option value="">Todas</option></select>
+    </div>
+    <div class="field">
+      <label for="f-impressora">Marca de impressora</label>
+      <select id="f-impressora"><option value="">Todas</option></select>
+    </div>
+    <div class="field">
+      <label for="f-cidade">Cidade</label>
+      <select id="f-cidade"><option value="">Todas</option></select>
+    </div>
+    <div class="field">
+      <label for="f-estado">Estado</label>
+      <select id="f-estado"><option value="">Todos</option></select>
+    </div>
+  </section>
+
+  <p class="count" id="count" aria-live="polite"></p>
+
+  <div class="table-wrap">
+    <table id="tabela">
+      <caption class="sr-only">Fornecedores de insumos e serviços de impressão 3D</caption>
+      <thead>
+        <tr>
+          <th class="col-toggle"><span class="sr-only">Expandir detalhes</span></th>
+          <th><button class="sort" data-key="nome">Nome<span aria-hidden="true"></span></button></th>
+          <th>Instagram</th>
+          <th>WhatsApp</th>
+        </tr>
+      </thead>
+      <tbody id="tbody"></tbody>
+    </table>
+  </div>
+  <p class="status" id="status" hidden></p>
+
+  <footer>
+    <p>
+      Mantido por <a href="https://instagram.com/qrino3d" target="_blank" rel="noopener noreferrer">instagram.com/qrino3d</a><br>
+      <a id="link-inclusao" href="#" target="_blank" rel="noopener noreferrer">Clique aqui para solicitar inclusão</a>
+    </p>
+  </footer>
+</main>
+
+<script>
+const CONFIG = {
+  spreadsheetId: '1SUw85BHb9YKhGlGsQC2M7ycjvSFTV0IX9qswu2mvatM',
+  gid: '2117614325',
+  formUrl: 'https://docs.google.com/forms/d/e/1FAIpQLSeBRfHINMYfVYBJ6_qhCO53UqBikmGZrzbHt-EYNipIcqVzSg/viewform',
+};
+
+const HEADER_MAP = {
+  'ID': 'id',
+  'Nome da Loja/Fornecedor': 'nome',
+  'Instagram': 'instagram',
+  'WhatsApp': 'whatsapp',
+  'Tipo de Serviços': 'servicos',
+  'Marcas de Filamento': 'marcasFilamento',
+  'Marcas de Impressora': 'marcasImpressora',
+  'Cidade': 'cidade',
+  'Estado': 'estado',
+  'Referência': 'referencia',
+};
+
+const DEMO_DATA = [
+  { id:'1', nome:'Exemplo Filamentos DF', instagram:'exemplofilamentosdf', whatsapp:'5561999990001', servicos:'Venda de filamento, Assistência técnica', marcasFilamento:'3D Fila, Voolt3D, GTMax3D', marcasImpressora:'Creality, Bambu Lab', cidade:'Brasília', estado:'DF', referencia:'Próximo ao Taguatinga Shopping' },
+  { id:'2', nome:'Oficina 3D Sul', instagram:'oficina3dsul', whatsapp:'5561999990002', servicos:'Manutenção de impressoras, Venda de peças', marcasFilamento:'GTMax3D', marcasImpressora:'Creality, Elegoo, Ender', cidade:'Brasília', estado:'DF', referencia:'Guará II, perto do metrô' },
+  { id:'3', nome:'ImpressãoJá Taguatinga', instagram:'impressaoja_tgt', whatsapp:'5561999990003', servicos:'Impressão sob encomenda, Venda de filamento', marcasFilamento:'3D Fila, Cliever', marcasImpressora:'Creality, Bambu Lab', cidade:'Taguatinga', estado:'DF', referencia:'Taguatinga Centro' },
+  { id:'4', nome:'Ceilândia Prints', instagram:'ceilandiaprints', whatsapp:'5561999990004', servicos:'Venda de impressoras, Assistência técnica', marcasFilamento:'Voolt3D', marcasImpressora:'Ender, Elegoo', cidade:'Ceilândia', estado:'DF', referencia:'Setor O' },
+  { id:'5', nome:'Entorno Maker', instagram:'entornomaker3d', whatsapp:'5561999990005', servicos:'Venda de filamento, Impressão sob encomenda', marcasFilamento:'GTMax3D, 3D Fila', marcasImpressora:'Creality', cidade:'Valparaíso de Goiás', estado:'GO', referencia:'Centro' },
+];
+
+let allRows = [];
+let sortKey = 'nome';
+let sortAsc = true;
+
+const el = (id) => document.getElementById(id);
+const linkInclusao = el('link-inclusao');
+linkInclusao.href = CONFIG.formUrl.startsWith('http') ? CONFIG.formUrl : 'https://instagram.com/qrino3d';
+
+function formatPhone(raw) {
+  const digits = String(raw || '').replace(/\D/g, '');
+  const full = digits.length <= 11 ? '55' + digits : digits;
+  const ddd = full.slice(2, 4);
+  const rest = full.slice(4);
+  const local = rest.length === 9 ? rest.slice(0,5) + '-' + rest.slice(5) : rest.slice(0,4) + '-' + rest.slice(4);
+  return { link: full, display: '(' + ddd + ') ' + local };
+}
+
+function parseGviz(text) {
+  const match = text.match(/setResponse\(([\s\S]*)\);?\s*$/);
+  if (!match) throw new Error('Formato de resposta inesperado da planilha');
+  const data = JSON.parse(match[1]);
+  const headers = data.table.cols.map(c => (c.label || '').trim());
+  return data.table.rows.map(row => {
+    const obj = {};
+    headers.forEach((h, i) => {
+      const key = HEADER_MAP[h];
+      if (!key) return;
+      const cell = row.c[i];
+      obj[key] = cell && cell.v != null ? String(cell.v).trim() : '';
+    });
+    return obj;
+  }).filter(r => r.nome);
+}
+
+async function loadData() {
+  const banner = el('banner');
+  const status = el('status');
+  status.hidden = true;
+
+  if (CONFIG.spreadsheetId === 'COLE_AQUI_O_ID_DA_PLANILHA') {
+    banner.hidden = false;
+    banner.textContent = '🔧 Modo demonstração — configure CONFIG.spreadsheetId no início do <script> para conectar a planilha real.';
+    allRows = DEMO_DATA;
+    populateFilters();
+    render();
+    return;
+  }
+
+  banner.hidden = true;
+  status.hidden = false;
+  status.className = 'status';
+  status.textContent = 'Carregando fornecedores…';
+
+  const url = 'https://docs.google.com/spreadsheets/d/' + CONFIG.spreadsheetId +
+    '/gviz/tq?tqx=out:json&gid=' + encodeURIComponent(CONFIG.gid) + '&cb=' + Date.now();
+
+  try {
+    const res = await fetch(url);
+    if (!res.ok) throw new Error('HTTP ' + res.status);
+    const text = await res.text();
+    allRows = parseGviz(text);
+    status.hidden = true;
+    populateFilters();
+    render();
+  } catch (err) {
+    status.className = 'status error';
+    status.textContent = 'Não foi possível carregar a lista agora. Tente novamente em instantes.';
+  }
+}
+
+function uniqueValues(rows, key) {
+  const set = new Set();
+  rows.forEach(r => (r[key] || '').split(',').forEach(v => {
+    const t = v.trim();
+    if (t) set.add(t);
+  }));
+  return Array.from(set).sort((a, b) => a.localeCompare(b, 'pt-BR'));
+}
+
+function fillSelect(select, values) {
+  const current = select.value;
+  select.querySelectorAll('option:not(:first-child)').forEach(o => o.remove());
+  values.forEach(v => {
+    const opt = document.createElement('option');
+    opt.value = v;
+    opt.textContent = v;
+    select.appendChild(opt);
+  });
+  if (values.includes(current)) select.value = current;
+}
+
+function populateFilters() {
+  fillSelect(el('f-servico'), uniqueValues(allRows, 'servicos'));
+  fillSelect(el('f-filamento'), uniqueValues(allRows, 'marcasFilamento'));
+  fillSelect(el('f-impressora'), uniqueValues(allRows, 'marcasImpressora'));
+  fillSelect(el('f-cidade'), uniqueValues(allRows, 'cidade'));
+  fillSelect(el('f-estado'), uniqueValues(allRows, 'estado'));
+}
+
+function matchesFilter(rowValue, selected) {
+  if (!selected) return true;
+  return (rowValue || '').split(',').map(v => v.trim()).includes(selected);
+}
+
+function getFiltered() {
+  const busca = el('f-busca').value.trim().toLowerCase();
+  const servico = el('f-servico').value;
+  const filamento = el('f-filamento').value;
+  const impressora = el('f-impressora').value;
+  const cidade = el('f-cidade').value;
+  const estado = el('f-estado').value;
+
+  return allRows.filter(r => {
+    if (busca && !((r.nome + ' ' + r.cidade + ' ' + r.referencia).toLowerCase().includes(busca))) return false;
+    if (!matchesFilter(r.servicos, servico)) return false;
+    if (!matchesFilter(r.marcasFilamento, filamento)) return false;
+    if (!matchesFilter(r.marcasImpressora, impressora)) return false;
+    if (cidade && r.cidade !== cidade) return false;
+    if (estado && r.estado !== estado) return false;
+    return true;
+  });
+}
+
+function render() {
+  const rows = getFiltered().slice().sort((a, b) => {
+    const cmp = (a[sortKey] || '').localeCompare(b[sortKey] || '', 'pt-BR');
+    return sortAsc ? cmp : -cmp;
+  });
+
+  document.querySelectorAll('th button.sort').forEach(btn => {
+    const th = btn.closest('th');
+    const active = btn.dataset.key === sortKey;
+    th.setAttribute('aria-sort', active ? (sortAsc ? 'ascending' : 'descending') : 'none');
+    btn.querySelector('span').textContent = active ? (sortAsc ? '▲' : '▼') : '';
+  });
+
+  const tbody = el('tbody');
+  tbody.innerHTML = '';
+  rows.forEach((r, i) => {
+    const phone = formatPhone(r.whatsapp);
+    const msg = encodeURIComponent('Olá, vi seu contato na lista https://qrino.com.br/contatos3d/ e gostaria de mais informações.');
+    const detailId = 'detail-' + i;
+
+    const tr = document.createElement('tr');
+    tr.innerHTML =
+      '<td class="col-toggle"><button type="button" class="row-toggle" aria-expanded="false" aria-controls="' + detailId + '"><span class="chevron" aria-hidden="true">▸</span><span class="sr-only">Ver detalhes de ' + escapeHtml(r.nome) + '</span></button></td>' +
+      '<td>' + escapeHtml(r.nome) + '</td>' +
+      '<td>' + (r.instagram ? '<a class="badge-link" href="https://instagram.com/' + encodeURIComponent(r.instagram) + '" target="_blank" rel="noopener noreferrer">@' + escapeHtml(r.instagram) + '</a>' : '') + '</td>' +
+      '<td>' + (r.whatsapp ? '<a class="badge-link whatsapp" href="https://wa.me/' + phone.link + '?text=' + msg + '" target="_blank" rel="noopener noreferrer" aria-label="Enviar mensagem no WhatsApp para ' + escapeHtml(r.nome) + '">' + phone.display + '</a>' : '') + '</td>';
+    tbody.appendChild(tr);
+
+    const detailTr = document.createElement('tr');
+    detailTr.className = 'detail-row';
+    detailTr.id = detailId;
+    detailTr.hidden = true;
+    detailTr.innerHTML =
+      '<td colspan="4"><dl class="detail-grid">' +
+      '<div><dt>Serviços</dt><dd>' + (escapeHtml(r.servicos) || '—') + '</dd></div>' +
+      '<div><dt>Marcas de filamento</dt><dd>' + (escapeHtml(r.marcasFilamento) || '—') + '</dd></div>' +
+      '<div><dt>Marcas de impressora</dt><dd>' + (escapeHtml(r.marcasImpressora) || '—') + '</dd></div>' +
+      '<div><dt>Cidade</dt><dd>' + (escapeHtml(r.cidade) || '—') + '</dd></div>' +
+      '<div><dt>Estado</dt><dd>' + (escapeHtml(r.estado) || '—') + '</dd></div>' +
+      '<div><dt>Referência</dt><dd>' + (escapeHtml(r.referencia) || '—') + '</dd></div>' +
+      '</dl></td>';
+    tbody.appendChild(detailTr);
+  });
+
+  el('count').textContent = rows.length + (rows.length === 1 ? ' fornecedor encontrado' : ' fornecedores encontrados');
+}
+
+function escapeHtml(s) {
+  return String(s || '').replace(/[&<>"']/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
+}
+
+document.querySelectorAll('th button.sort').forEach(btn => {
+  btn.addEventListener('click', () => {
+    const key = btn.dataset.key;
+    if (sortKey === key) sortAsc = !sortAsc;
+    else { sortKey = key; sortAsc = true; }
+    render();
+  });
+});
+
+['f-busca', 'f-servico', 'f-filamento', 'f-impressora', 'f-cidade', 'f-estado'].forEach(id => {
+  el(id).addEventListener('input', render);
+});
+
+el('btn-refresh').addEventListener('click', loadData);
+
+el('btn-toggle-filters').addEventListener('click', () => {
+  const btn = el('btn-toggle-filters');
+  const panel = el('filters-panel');
+  const expanded = btn.getAttribute('aria-expanded') === 'true';
+  btn.setAttribute('aria-expanded', String(!expanded));
+  panel.hidden = expanded;
+  btn.childNodes[0].textContent = expanded ? 'Ver filtros ' : 'Ocultar filtros ';
+});
+
+el('tbody').addEventListener('click', (e) => {
+  const btn = e.target.closest('button.row-toggle');
+  if (!btn) return;
+  const detail = document.getElementById(btn.getAttribute('aria-controls'));
+  const expanded = btn.getAttribute('aria-expanded') === 'true';
+  btn.setAttribute('aria-expanded', String(!expanded));
+  detail.hidden = expanded;
+});
+
+el('btn-clear').addEventListener('click', () => {
+  el('f-busca').value = '';
+  ['f-servico', 'f-filamento', 'f-impressora', 'f-cidade', 'f-estado'].forEach(id => { el(id).value = ''; });
+  render();
+});
+
+loadData();
+</script>
+</body>
+</html>
